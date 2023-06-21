@@ -34,7 +34,7 @@ import com.exception.BusinessException;
 //指定运行测试的测试运行器。在这里，SpringRunner.class 是 Spring Boot 提供的测试运行器，用于在测试期间启动 Spring 容器。
 @RunWith(SpringRunner.class)
 //指定当前类是一个 Spring Boot 测试类。它告诉 Spring Boot 创建一个测试环境，并加载应用程序的上下文。
-aa
+aa7777777777777777777777777777777777777777777777777777777
 @SpringBootTest
 public class MarketStoreServiceTest_Junit {
 	// 标记 service 对象，用于自动将 MarketStoreServiceImpl 类的实例注入到该对象中。
