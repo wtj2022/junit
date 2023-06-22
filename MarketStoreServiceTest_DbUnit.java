@@ -1,6 +1,4 @@
 
-/**qqqqqqqqqqqqqqqqqq
-
 /**ccccccc
 
      * 
