@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>SellCalculateServiceImpl.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.service.sellcalculate</a> &gt; <span class="el_source">SellCalculateServiceImpl.java</span></div><h1>SellCalculateServiceImpl.java</h1><pre class="source lang-java linenums">package com.cms.service.sellcalculate;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+
+import com.cms.entity.marketstore.MarketStoreBean;
+import com.cms.entity.sellcalculate.SellDataBean;
+import com.cms.entity.sellcsv.SellCsvBean;
+import com.cms.mapper.sellcalculate.SellCalculateMapper;
+import com.exception.BusinessException;
+
+import io.micrometer.core.instrument.util.StringUtils;
+
+/**
+ * 請求書計算ServiceImpl
+ */
+@SuppressWarnings(&quot;rawtypes&quot;)
+@Service
+<span class="fc" id="L26">public class SellCalculateServiceImpl implements SellCalculateService {</span>
+
+	@Autowired
+	SellCalculateMapper mapper;
+	private MarketStoreBean MarketStoreBean;
+	private List&lt;SellCsvBean&gt; sellCsvList;
+	private List&lt;SellDataBean&gt; registList;
+
+	/**
+	 * 請求書データを登録する
+	 * 
+	 * @param employeeId 社員ID
+	 * @param workMonth  勤務年月
+	 * @return List&lt;SellDataBean&gt; 計算後の請求書
+	 */
+	@Override
+	public List&lt;SellDataBean&gt; calculateSellData(String storeId, String sellMonth) throws Exception {
+
+		// 変数の初期化
+<span class="nc" id="L45">		sellCsvList = new ArrayList&lt;SellCsvBean&gt;();</span>
+<span class="nc" id="L46">		registList = new ArrayList&lt;SellDataBean&gt;();</span>
+
+		// チェック処理
+<span class="nc" id="L49">		check(storeId, sellMonth);</span>
+
+		// 勤務時間を統計する
+<span class="nc" id="L52">		calculate();</span>
+
+		// 請求書の登録
+<span class="nc" id="L55">		registeData();</span>
+
+		// 登録結果を戻す
+		
+<span class="nc" id="L59">		return registList;</span>
+	}
+
+	/**
+	 * チェック処理
+	 * 
+	 * @param employeeId 社員ID
+	 * @param workMonth  勤務年月
+	 * 
+	 * @throws Exception
+	 */
+	private void check(String storeId, String sellMonth) throws Exception {
+
+		// ■入力チェック
+<span class="nc bnc" id="L73" title="All 2 branches missed.">		if (StringUtils.isEmpty(storeId)) {</span>
+			// 社員の必須チェック
+<span class="nc" id="L75">			throw new BusinessException(&quot;IDをご設定ください&quot;);</span>
+		}
+
+		// ■8文字以内の文字列のチェック
+<span class="nc bnc" id="L79" title="All 2 branches missed.">		if (storeId.length() &gt; 8) {</span>
+			// 社員の必須チェック
+<span class="nc" id="L81">			throw new BusinessException(&quot;8文字以内のIDをご入力ください。&quot;);</span>
+		}
+
+		// ■マスタ存在チェック（社員情報）
+<span class="nc" id="L85">		MarketStoreBean inputBean = new MarketStoreBean();</span>
+<span class="nc" id="L86">		inputBean.setStoreId(storeId);</span>
+<span class="nc" id="L87">		MarketStoreBean = mapper.selectStore(inputBean);</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">		if (MarketStoreBean == null) {</span>
+<span class="nc" id="L89">			throw new BusinessException(&quot;店舗は存在しません。&quot;);</span>
+		}
+
+		// ■マスタ存在チェック（卖上）
+<span class="nc" id="L93">		SellCsvBean sellInfo = new SellCsvBean();</span>
+<span class="nc" id="L94">		sellInfo.setStoreId(storeId);</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">		if (!StringUtils.isEmpty(sellMonth)) {</span>
+<span class="nc" id="L96">			sellInfo.setSalesDay(sellMonth);</span>
+		}
+<span class="nc" id="L98">		sellCsvList = mapper.selectMarketSales(sellInfo);</span>
+<span class="nc bnc" id="L99" title="All 4 branches missed.">		if (sellCsvList == null || sellCsvList.size() == 0) {</span>
+<span class="nc" id="L100">			throw new BusinessException(&quot;売上情報は存在しません。&quot;);</span>
+		}
+<span class="nc" id="L102">	}</span>
+
+	/**
+	 * 勤務時間計算
+	 * 
+	 */
+	private void calculate() {
+
+		// 月毎に勤務情報の1件目を保存する（共通項目を利用するため）
+
+		// 出勤時間の合計をMapに保存する
+//		Map&lt;String, Integer&gt; workHourMap = new HashMap&lt;String, Integer&gt;();
+
+		// 2.1システム日付の取得
+<span class="nc" id="L116">		Date today = Calendar.getInstance().getTime();</span>
+<span class="nc" id="L117">		Timestamp timestamp = new Timestamp(today.getTime());</span>
+
+<span class="nc" id="L119">		String key = &quot;&quot;;</span>
+<span class="nc" id="L120">		int salesCount = 0;</span>
+<span class="nc" id="L121">		double salesAmount = 0;</span>
+<span class="nc" id="L122">		double cost = 0;</span>
+<span class="nc" id="L123">		double benefit = 0;</span>
+<span class="nc" id="L124">		String storeId = &quot;&quot;;</span>
+<span class="nc" id="L125">		String salesDay = &quot;&quot;;</span>
+<span class="nc" id="L126">		String maxId = mapper.selectMaxId();</span>
+<span class="nc" id="L127">		int recordId = Integer.valueOf(maxId) + 1;</span>
+
+		// ■勤務時間の合計
+<span class="nc bnc" id="L130" title="All 2 branches missed.">		for (SellCsvBean bean : sellCsvList) {</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">			if (key != bean.getStoreId() + bean.getSalesDay()) {</span>
+				// グループが違う場合
+<span class="nc" id="L133">				key = bean.getStoreId() + bean.getSalesDay();</span>
+				// 2.2.3レコードの作成
+<span class="nc bnc" id="L135" title="All 2 branches missed.">				if (salesCount != 0) {</span>
+<span class="nc" id="L136">					SellDataBean calGroup = new SellDataBean();</span>
+<span class="nc" id="L137">					String maxBenefitId = String.valueOf(recordId);</span>
+<span class="nc" id="L138">					calGroup.setBenefitId(maxBenefitId);</span>
+<span class="nc" id="L139">					calGroup.setSalesCount(salesCount);</span>
+<span class="nc" id="L140">					calGroup.setSalesAmount(salesAmount);</span>
+<span class="nc" id="L141">					calGroup.setCost(cost);</span>
+<span class="nc" id="L142">					calGroup.setBenefit(benefit);</span>
+<span class="nc" id="L143">					calGroup.setStoreId(storeId);</span>
+<span class="nc" id="L144">					calGroup.setSalesDay(salesDay);</span>
+<span class="nc" id="L145">					calGroup.setRegistDay(timestamp);</span>
+<span class="nc" id="L146">					calGroup.setUpdateDay(timestamp);</span>
+<span class="nc" id="L147">					registList.add(calGroup);</span>
+<span class="nc" id="L148">					recordId ++;</span>
+
+					// 2.2.4合計項目クリア
+<span class="nc" id="L151">					salesCount = 0;</span>
+<span class="nc" id="L152">					salesAmount = 0;</span>
+<span class="nc" id="L153">					cost = 0;</span>
+<span class="nc" id="L154">					benefit = 0;</span>
+				}
+				// 2.2.2項目合計
+				// 合計売買件数＝合計売買件数＋【1.3売上検索】・購入件数
+<span class="nc" id="L158">				salesCount = bean.getSalesCount();</span>
+				// 合計売買金額＝合計売買金額+【1.3売上検索】・購入件数＊【1.3売上検索】・販売単価
+<span class="nc" id="L160">				salesAmount = bean.getSalesCount() * Double.parseDouble(bean.getSalesPrice());</span>
+				// 合計仕入金額＝合計仕入金額+【1.3売上検索】・購入件数＊【1.3売上検索】・仕入単価
+<span class="nc" id="L162">				cost = bean.getSalesCount() * Double.parseDouble(bean.getPurchasePrice());</span>
+				// 合計利益＝合計利益+【1.3売上検索】・購入件数＊（【1.3売上検索】・販売単価-【1.3売上検索】・仕入単価）
+<span class="nc" id="L164">				benefit = bean.getSalesCount()</span>
+<span class="nc" id="L165">						* (Double.parseDouble(bean.getSalesPrice()) - Double.parseDouble(bean.getPurchasePrice()));</span>
+<span class="nc" id="L166">				storeId = bean.getStoreId();</span>
+<span class="nc" id="L167">				salesDay = bean.getSalesDay();</span>
+
+<span class="nc bnc" id="L169" title="All 2 branches missed.">			} else if (key == bean.getStoreId() + bean.getSalesDay()) {</span>
+<span class="nc" id="L170">				salesCount += bean.getSalesCount();</span>
+<span class="nc" id="L171">				salesAmount += bean.getSalesCount() * Double.parseDouble(bean.getSalesPrice());</span>
+<span class="nc" id="L172">				cost += bean.getSalesCount() * Double.parseDouble(bean.getPurchasePrice());</span>
+<span class="nc" id="L173">				benefit += bean.getSalesCount()</span>
+<span class="nc" id="L174">						* (Double.parseDouble(bean.getSalesPrice()) - Double.parseDouble(bean.getPurchasePrice()));</span>
+
+			}
+
+		}
+<span class="nc" id="L179">		SellDataBean calGroup = new SellDataBean();</span>
+<span class="nc" id="L180">		String maxBenefitId = String.valueOf(recordId);</span>
+<span class="nc" id="L181">		calGroup.setBenefitId(maxBenefitId);</span>
+<span class="nc" id="L182">		calGroup.setSalesCount(salesCount);</span>
+<span class="nc" id="L183">		calGroup.setSalesAmount(salesAmount);</span>
+<span class="nc" id="L184">		calGroup.setCost(cost);</span>
+<span class="nc" id="L185">		calGroup.setBenefit(benefit);</span>
+<span class="nc" id="L186">		calGroup.setStoreId(storeId);</span>
+<span class="nc" id="L187">		calGroup.setSalesDay(salesDay);</span>
+<span class="nc" id="L188">		calGroup.setRegistDay(timestamp);</span>
+<span class="nc" id="L189">		calGroup.setUpdateDay(timestamp);</span>
+<span class="nc" id="L190">		registList.add(calGroup);</span>
+<span class="nc" id="L191">		recordId++;</span>
+<span class="nc" id="L192">		}</span>
+
+	// 作成されるレコードを【月次売買(販売店)登録リスト】に保存する
+
+	/**
+	 * 請求書の登録
+	 * 
+	 */
+	private void registeData() {
+		try {
+<span class="nc" id="L202">			mapper.insertRecords(registList);</span>
+<span class="nc" id="L203">		} catch (DuplicateKeyException e1) {</span>
+			// 登録キー重複エラー
+<span class="nc" id="L205">			throw new BusinessException(&quot;指定条件の請求書がすでに登録されました。&quot;, e1);</span>
+<span class="nc" id="L206">		} catch (Exception se) {</span>
+			// 予想外エラー
+<span class="nc" id="L208">			throw new BusinessException(se.getMessage());</span>
+		}
+<span class="nc" id="L210">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

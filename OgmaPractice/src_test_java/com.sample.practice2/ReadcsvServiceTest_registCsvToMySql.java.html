@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>ReadcsvServiceTest_registCsvToMySql.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">com.sample.practice2</a> &gt; <span class="el_source">ReadcsvServiceTest_registCsvToMySql.java</span></div><h1>ReadcsvServiceTest_registCsvToMySql.java</h1><pre class="source lang-java linenums">package com.sample.practice2;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.dbunit.database.IDatabaseConnection;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.base.UnitTestBase;
+import com.cms.service.practice2.RegistCsvService;
+
+@SuppressWarnings(&quot;rawtypes&quot;)
+@RunWith(SpringRunner.class)  
+@SpringBootTest
+<span class="nc" id="L20">public class ReadcsvServiceTest_registCsvToMySql</span>
+{
+	private static IDatabaseConnection conn;
+
+	private final static String path = &quot;src\\test\\data\\practice2\\&quot;;
+	/* テストデータを登録する */
+    @BeforeAll
+    public static void init() throws Exception {
+<span class="nc" id="L28">    	conn = UnitTestBase.connect();</span>
+		//CSVデータを取り込む
+<span class="nc" id="L30">    	UnitTestBase.clearData(path,conn);</span>
+<span class="nc" id="L31">	}</span>
+    
+    @AfterAll
+    public static void closeConnection() throws Exception {
+<span class="nc" id="L35">    	UnitTestBase.clearData(path,conn);</span>
+		//CSVデータを取り込む
+<span class="nc" id="L37">    	UnitTestBase.closeConnection(conn);</span>
+<span class="nc" id="L38">	}</span>
+	@Autowired
+	RegistCsvService service;
+   
+    /**
+     * 正常パターン（複数件が登録される）
+     * 
+     * ※全レコード抽出
+     */
+    @Test
+    public void test_readDataFromMysql_01_OK() 
+    {
+    	
+		try {
+<span class="nc" id="L52">			int registCount = service.registCsvToMySql(path+&quot;unit_case_ok_01.csv&quot;, 9);</span>
+<span class="nc" id="L53">	    	assertEquals(2, registCount);</span>
+<span class="nc" id="L54">		} catch (Exception e) {</span>
+<span class="nc" id="L55">			e.printStackTrace();</span>
+		}
+    	
+<span class="nc" id="L58">    }</span>
+    
+    /**
+     * 異常終了（ファイルが設定されない。）
+     * 
+     */
+    @Test
+    public void test_readDataFromMysql_01_NG() {
+    	try {
+<span class="nc" id="L67">			service.registCsvToMySql(&quot;&quot;, 7);</span>
+<span class="nc" id="L68">		} catch (Exception e) {</span>
+<span class="nc" id="L69">	    	assertEquals(&quot;ファイルが指定されません。&quot;, e.getMessage());</span>
+		}
+<span class="nc" id="L71">    }</span>
+    
+    /**
+     * 異常終了（空白ファイル）
+     * 
+     */
+    @Test
+    public void test_readDataFromMysql_02_NG() {
+    	try {
+<span class="nc" id="L80">			service.registCsvToMySql(path+&quot;unit_case_ng_02.csv&quot;, 7);</span>
+<span class="nc" id="L81">		} catch (Exception e) {</span>
+<span class="nc" id="L82">			assertEquals(&quot;空白ファイルです。&quot;, e.getMessage());</span>
+		}
+<span class="nc" id="L84">    }</span>
+    
+    /**
+     * 異常終了（項目数不一致）
+     * 
+     */
+    @Test
+    public void test_readDataFromMysql_03_NG() {
+    	try {
+<span class="nc" id="L93">			service.registCsvToMySql(path+&quot;unit_case_ng_03.csv&quot;, 7);</span>
+<span class="nc" id="L94">		} catch (Exception e) {</span>
+<span class="nc" id="L95">			assertEquals(&quot;ヘッダ項目件数は正しくありません。(正確の項目数：７)&quot;, e.getMessage());</span>
+		}
+<span class="nc" id="L97">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

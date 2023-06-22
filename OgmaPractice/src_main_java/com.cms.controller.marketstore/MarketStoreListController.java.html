@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>MarketStoreListController.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.controller.marketstore</a> &gt; <span class="el_source">MarketStoreListController.java</span></div><h1>MarketStoreListController.java</h1><pre class="source lang-java linenums">package com.cms.controller.marketstore;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.cms.controller.base.ControllerBase;
+import com.cms.entity.employee.CmsEmployeeBean;
+import com.cms.form.marketstore.MarketStoreListForm;
+import com.cms.mapper.common.CommonMapper;
+import com.cms.service.marketstore.MarketStoreService;
+import com.exception.BusinessException;
+import com.utils.ServiceUtils;
+
+/**
+ * ログイン コントローラー
+ */
+@Controller
+@RequestMapping(value = &quot;/marketstore/marketstorelist&quot;)
+<span class="fc" id="L29">public class MarketStoreListController extends ControllerBase {</span>
+	private List&lt;CmsEmployeeBean&gt; lst;
+
+	@Autowired
+	MarketStoreService service;
+
+	@Autowired
+	ServiceUtils serviceUtils;
+	
+	@Autowired
+	CommonMapper commonMapper;
+
+	/**
+	 * ユーザ画面初期化
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public String init(Model model, HttpServletRequest request) {
+
+			
+<span class="nc" id="L48">			MarketStoreListForm form = new MarketStoreListForm();</span>
+			
+<span class="nc" id="L50">			model.addAttribute(&quot;form&quot;, form);</span>
+			
+		
+<span class="nc" id="L53">		return &quot;/marketstore/marketstorelist&quot;;</span>
+	}
+
+	/**
+	 * 检索
+	 */
+	@RequestMapping(params = &quot;select&quot;, method = RequestMethod.POST)
+	public String select(@ModelAttribute(&quot;form&quot;) MarketStoreListForm form, Model model, HttpServletRequest request) {
+		try {
+<span class="nc" id="L62">			service.select(form);</span>
+<span class="nc" id="L63">		} catch (BusinessException be) {</span>
+			
+			//業務エラーを画面に表示する
+<span class="nc" id="L66">			form.setErrorMessage(be.getMessage());</span>
+<span class="nc" id="L67">			model.addAttribute(&quot;form&quot;, form);</span>
+		}
+<span class="nc" id="L69">		return &quot;/marketstore/marketstorelist&quot;;</span>
+	}
+	
+	/**
+	 * 新規ボタン
+	 */
+	@RequestMapping(params = &quot;addStore&quot;, method = RequestMethod.POST)
+	public String addStore(Model model) {
+
+<span class="nc" id="L78">		return &quot;redirect:/marketstore/marketstoreadd&quot;;</span>
+	}
+	
+	/**
+	 * 更新ボタン
+	 */
+	@RequestMapping(params = &quot;update&quot;, method = RequestMethod.POST)
+	public String update(RedirectAttributes redirectAttributes, @RequestParam String update) {
+        
+
+		// 更新画面へ渡す引数：社員ＩＤ
+<span class="nc" id="L89">		redirectAttributes.addAttribute(&quot;selectedStoreId&quot;, update);</span>
+<span class="nc" id="L90">		return &quot;redirect:/marketstore/marketstoreedit&quot;;</span>
+	}
+
+		/**
+		 * 参照ボタン
+		 */
+		@RequestMapping(params = &quot;read&quot;, method = RequestMethod.POST)
+		public String read( RedirectAttributes redirectAttributes, @RequestParam String read) {
+			
+			// 更新画面へ渡す引数：社員ＩＤ
+<span class="nc" id="L100">			redirectAttributes.addAttribute(&quot;selectedStoreId&quot;, read);</span>
+<span class="nc" id="L101">			return &quot;redirect:/marketstore/marketstoreview&quot;;</span>
+
+		}
+		
+		/**
+		 * 削除ボタン
+		 */
+		@RequestMapping(params = &quot;delete&quot;, method = RequestMethod.POST)
+		public String delete(@ModelAttribute(&quot;form&quot;) MarketStoreListForm form, 
+				Model model, @RequestParam String delete) {
+
+			try {
+				
+				//削除を行う
+<span class="nc" id="L115">				service.delete(delete);</span>
+<span class="nc" id="L116">				service.select(form);</span>
+
+
+<span class="nc" id="L119">			} catch (BusinessException be) {</span>
+				
+<span class="nc" id="L121">				form.setErrorMessage(be.getMessage());</span>
+<span class="nc" id="L122">				model.addAttribute(&quot;form&quot;, form);</span>
+			}
+
+<span class="nc" id="L125">			return &quot;/marketstore/marketstorelist&quot;;</span>
+
+		}
+		
+		/**
+		 * 全削除
+		 */
+		@RequestMapping(params = &quot;deleteAll&quot;, method = RequestMethod.POST)
+		public String deleteAll(@ModelAttribute(&quot;form&quot;) MarketStoreListForm form, Model model) {
+
+			//全削除サービスを呼び出す
+			try {
+<span class="nc" id="L137">			service.deleteAll(form.getDeleteStoreIds());</span>
+<span class="nc" id="L138">			service.select(form);</span>
+<span class="nc" id="L139">} catch (BusinessException be) {</span>
+				
+<span class="nc" id="L141">				form.setErrorMessage(be.getMessage());</span>
+			}
+
+//
+			
+<span class="nc" id="L146">			return &quot;/marketstore/marketstorelist&quot;;</span>
+
+		}
+
+	}
+	
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

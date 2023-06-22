@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CalculateInvoiceServiceImpl.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.service.practice3</a> &gt; <span class="el_source">CalculateInvoiceServiceImpl.java</span></div><h1>CalculateInvoiceServiceImpl.java</h1><pre class="source lang-java linenums">package com.cms.service.practice3;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+
+import com.cms.entity.cmsworkhour.CmsWorkHourBean;
+import com.cms.entity.employee.CmsEmployeeBean;
+import com.cms.entity.invoice.CmsInvoiceBean;
+import com.cms.mapper.practice3.Practice3Mapper;
+import com.exception.BusinessException;
+import com.utils.CmsUtils;
+
+import io.micrometer.core.instrument.util.StringUtils;
+
+/**
+ * 請求書計算ServiceImpl
+ */
+@SuppressWarnings(&quot;rawtypes&quot;)
+@Service
+<span class="fc" id="L29">public class CalculateInvoiceServiceImpl implements CalculateInvoiceService {</span>
+
+	@Autowired
+	Practice3Mapper mapper;
+	private CmsEmployeeBean employeeBean;
+	private List&lt;CmsWorkHourBean&gt; workHoursList;
+	private List&lt;CmsInvoiceBean&gt; registList;
+
+	/**
+	 * 請求書データを登録する
+	 * 
+	 * @param employeeId 社員ID
+	 * @param workMonth　勤務年月
+	 * @return List&lt;CmsInvoiceBean&gt; 計算後の請求書
+	 */
+	@Override
+	public List&lt;CmsInvoiceBean&gt; calculateWorkHourAndSalary(String employeeId, String workMonth) throws Exception {
+
+		// 変数の初期化
+<span class="nc" id="L48">		workHoursList = new ArrayList&lt;CmsWorkHourBean&gt;();</span>
+<span class="nc" id="L49">		registList = new ArrayList&lt;CmsInvoiceBean&gt;();</span>
+
+		// チェック処理
+<span class="nc" id="L52">		check(employeeId, workMonth);</span>
+
+		// 勤務時間を統計する
+<span class="nc" id="L55">		calculate();</span>
+
+		// 請求書の登録
+<span class="nc" id="L58">		registeData();</span>
+
+		// 登録結果を戻す
+<span class="nc" id="L61">		return registList;</span>
+	}
+
+	/**
+	 * チェック処理
+	 * 
+	 * @param employeeId 社員ID
+	 * @param workMonth  勤務年月
+	 * 
+	 * @throws Exception
+	 */
+	private void check(String employeeId, String workMonth) throws Exception {
+
+		// ■入力チェック
+<span class="nc bnc" id="L75" title="All 2 branches missed.">		if (StringUtils.isEmpty(employeeId)) {</span>
+			// 社員の必須チェック
+<span class="nc" id="L77">			throw new BusinessException(&quot;社員IDをご設定ください&quot;);</span>
+		}
+
+		// ■8文字以内の文字列のチェック
+<span class="nc bnc" id="L81" title="All 2 branches missed.">		if (employeeId.length() &gt; 8) {</span>
+			// 社員の必須チェック
+<span class="nc" id="L83">			throw new BusinessException(&quot;8文字以内の社員IDをご入力ください。&quot;);</span>
+		}
+
+		// ■マスタ存在チェック（社員情報）
+<span class="nc" id="L87">		CmsEmployeeBean inputBean = new CmsEmployeeBean();</span>
+<span class="nc" id="L88">		inputBean.setEmployeeId(employeeId);</span>
+<span class="nc" id="L89">		employeeBean = mapper.selectEmployee(inputBean);</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">		if (employeeBean == null) {</span>
+<span class="nc" id="L91">			throw new BusinessException(&quot;社員はありません。&quot;);</span>
+		}
+
+<span class="nc bnc" id="L94" title="All 2 branches missed.">		if (inputBean != null) {</span>
+<span class="nc" id="L95">			BigDecimal hours = new BigDecimal(employeeBean.getTopWorkHour());</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">			if (hours.compareTo(new BigDecimal(0)) &lt;= 0) {</span>
+<span class="nc" id="L97">				throw new BusinessException(&quot;社員情報に1以上の整数をご登録ください。&quot;);</span>
+			}
+		}
+
+		// ■マスタ存在チェック（勤務情報）
+<span class="nc" id="L102">		CmsWorkHourBean workHour = new CmsWorkHourBean();</span>
+<span class="nc" id="L103">		workHour.setEmployeeId(employeeId);</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">		if (!StringUtils.isEmpty(workMonth)) {</span>
+<span class="nc" id="L105">			workHour.setWorkMonth(workMonth);</span>
+		}
+<span class="nc" id="L107">		workHoursList = mapper.selectWorkHourList(workHour);</span>
+<span class="nc bnc" id="L108" title="All 4 branches missed.">		if (workHoursList == null || workHoursList.size() == 0) {</span>
+<span class="nc" id="L109">			throw new BusinessException(&quot;該当社員の勤怠情報はありません。&quot;);</span>
+		}
+<span class="nc" id="L111">	}</span>
+
+	/**
+	 * 勤務時間計算
+	 * 
+	 */
+	private void calculate() {
+
+		// 月毎に勤務情報の1件目を保存する（共通項目を利用するため）
+<span class="nc" id="L120">		Map&lt;String, CmsWorkHourBean&gt; keyMap = new HashMap&lt;String, CmsWorkHourBean&gt;();</span>
+
+		// 出勤時間の合計をMapに保存する
+<span class="nc" id="L123">		Map&lt;String, Integer&gt; workHourMap = new HashMap&lt;String, Integer&gt;();</span>
+
+<span class="nc" id="L125">		String key = &quot;&quot;;</span>
+<span class="nc" id="L126">		Integer workHourVal = 0;</span>
+
+		// ■勤務時間の合計
+<span class="nc bnc" id="L129" title="All 2 branches missed.">		for (CmsWorkHourBean bean : workHoursList) {</span>
+<span class="nc" id="L130">			key = bean.getEmployeeId() + bean.getWorkMonth();</span>
+
+<span class="nc" id="L132">			long diff = bean.getEndTime().getTime() - bean.getStartTime().getTime();</span>
+			// 勤務時間を算出する
+<span class="nc" id="L134">			String hoursVal = CmsUtils.parseMillisecone(diff);</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">			if (workHourMap.containsKey(key)) {</span>
+				// 勤務時間を合計する
+<span class="nc" id="L137">				workHourVal = workHourMap.get(key);</span>
+<span class="nc" id="L138">				workHourVal = workHourVal + Integer.valueOf(hoursVal);</span>
+<span class="nc" id="L139">				workHourMap.put(key, workHourVal);</span>
+<span class="nc" id="L140">			} else {</span>
+<span class="nc" id="L141">				workHourVal = Integer.valueOf(hoursVal);</span>
+<span class="nc" id="L142">				workHourMap.put(key, workHourVal);</span>
+<span class="nc" id="L143">				keyMap.put(key, bean);</span>
+			}
+		}
+
+<span class="nc" id="L147">		Date today = Calendar.getInstance().getTime();</span>
+		// 勤務年月の請求書を作成する
+<span class="nc" id="L149">		CmsInvoiceBean insBean = new CmsInvoiceBean();</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">		for (CmsWorkHourBean bean : keyMap.values()) {</span>
+<span class="nc" id="L151">			insBean = new CmsInvoiceBean();</span>
+<span class="nc" id="L152">			key = bean.getEmployeeId() + bean.getWorkMonth();</span>
+
+			// 社員ID
+<span class="nc" id="L155">			insBean.setEmployeeId(bean.getEmployeeId());</span>
+			// 勤務年月
+<span class="nc" id="L157">			insBean.setWorkMonth(bean.getWorkMonth());</span>
+			// 会社
+<span class="nc" id="L159">			insBean.setCompanyName(&quot;オージーエム&quot;);</span>
+			// 請求先
+<span class="nc" id="L161">			insBean.setRequestFirst(&quot;NEC&quot;);</span>
+			// 標準勤務時間（例：180時間）
+<span class="nc" id="L163">			insBean.setStandardBusinessHours(employeeBean.getTopWorkHour());</span>
+			// 基本給料
+<span class="nc" id="L165">			insBean.setSalary(employeeBean.getSalary());</span>
+			// 月次勤務時間の合計
+<span class="nc" id="L167">			insBean.setRealWorkHous(workHourMap.get(key));</span>
+			// 残業代の計算
+<span class="nc" id="L169">			Integer hoursDiff = insBean.getRealWorkHous() - insBean.getStandardBusinessHours();</span>
+<span class="nc" id="L170">			BigDecimal salary = insBean.getSalary();</span>
+<span class="nc" id="L171">			BigDecimal standardBusinessHours = new BigDecimal(insBean.getStandardBusinessHours());</span>
+<span class="nc" id="L172">			BigDecimal workOvertimeSalary = salary.divide(standardBusinessHours, 0, BigDecimal.ROUND_HALF_UP)</span>
+<span class="nc" id="L173">					.multiply(new BigDecimal(hoursDiff));</span>
+<span class="nc" id="L174">			insBean.setDisabledGeneration(workOvertimeSalary);</span>
+<span class="nc" id="L175">			insBean.setRegistDay(today);</span>
+<span class="nc" id="L176">			insBean.setUpdateDay(today);</span>
+
+<span class="nc" id="L178">			insBean.setEmployeeName(employeeBean.getName());</span>
+<span class="nc" id="L179">			registList.add(insBean);</span>
+		}
+<span class="nc" id="L181">	}</span>
+
+	/**
+	 * 請求書の登録
+	 * 
+	 */
+	private void registeData() {
+		try {
+<span class="nc" id="L189">			mapper.insertRecords(registList);</span>
+<span class="nc" id="L190">		} catch (DuplicateKeyException e1) {</span>
+			//登録キー重複エラー
+<span class="nc" id="L192">			throw new BusinessException(&quot;指定条件の請求書がすでに登録されました。&quot;, e1);</span>
+<span class="nc" id="L193">		} catch (Exception se) {</span>
+			//予想外エラー
+<span class="nc" id="L195">			throw new BusinessException(se.getMessage());			</span>
+		}
+<span class="nc" id="L197">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

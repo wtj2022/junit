@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>MarketCRUDTest_Mock_Service.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">com.sample.junit0614</a> &gt; <span class="el_source">MarketCRUDTest_Mock_Service.java</span></div><h1>MarketCRUDTest_Mock_Service.java</h1><pre class="source lang-java linenums">package com.sample.junit0614;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.dbunit.database.IDatabaseConnection;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.cms.entity.marketstore.MarketStoreBean;
+import com.cms.form.marketstore.MarketStoreForm;
+import com.cms.form.marketstore.MarketStoreListForm;
+import com.cms.mapper.marketstore.MarketStoreMapper;
+import com.cms.service.marketstore.MarketStoreServiceImpl;
+
+@SuppressWarnings(&quot;rawtypes&quot;)
+@RunWith(SpringRunner.class)  
+@SpringBootTest
+<span class="nc" id="L27">public class MarketCRUDTest_Mock_Service </span>
+{
+	private static IDatabaseConnection conn;
+	private final static String path = &quot;src\\test\\data\\practice4\\&quot;;
+	
+//	/* テストデータを登録する */
+//	@BeforeAll
+//	public static void init() throws Exception {
+//		conn = UnitTestBase.connect();
+//
+//		// 実施前にテーブルの既存データをクリアする
+//		UnitTestBase.clearData(path, conn);
+//		// CSVデータを取り込む
+//		UnitTestBase.initData(path, conn);
+//	}
+//
+//	@AfterAll
+//	public static void closeConnection() throws Exception {
+//		UnitTestBase.clearData(path, conn);
+//		// CSVデータを取り込む
+//		UnitTestBase.closeConnection(conn);
+//	}
+	
+	@InjectMocks
+	private MarketStoreServiceImpl service;
+     
+    @Mock
+    private MarketStoreMapper mapper;
+//    
+	
+//	@Autowired
+//	MarketStoreServiceImpl service;
+	
+    /**
+     * 空表单
+     * 
+     * 検索件数：3件
+     */
+    @Test
+    public void test_marketCRUD_001_OK() 
+    {
+    	
+    	//検索結果Mock
+<span class="nc" id="L70">    	List&lt;MarketStoreBean&gt; mockResults = new ArrayList&lt;MarketStoreBean&gt;();</span>
+
+<span class="nc" id="L72">    	mockResults.add(createBean(&quot;1&quot;));</span>
+<span class="nc" id="L73">    	mockResults.add(createBean(&quot;2&quot;));</span>
+<span class="nc" id="L74">    	mockResults.add(createBean(&quot;3&quot;));</span>
+    	
+    	//引数
+<span class="nc" id="L77">    	MarketStoreBean paramBean = new MarketStoreBean();</span>
+    	
+<span class="nc" id="L79">    	Mockito.when(this.mapper.select(paramBean)).thenReturn(mockResults);</span>
+    	
+//    	List&lt;MarketStoreListForm&gt; beanList = null;
+    	MarketStoreListForm resultForm ;
+		try {
+<span class="nc" id="L84">			resultForm =  service.select(new MarketStoreListForm());</span>
+<span class="nc" id="L85">			assertEquals(mockResults.size(), resultForm.getResults().size());</span>
+//	    	}
+<span class="nc" id="L87">		} catch (Exception e) {</span>
+<span class="nc" id="L88">			e.printStackTrace();</span>
+		}
+<span class="nc" id="L90">    }</span>
+    
+    
+    
+    /**
+     * 带值表单
+     * 
+     * 検索件数：3件
+     */
+    @Test
+    public void test_marketCRUD_002_NO() 
+    {
+    	
+    	//検索結果Mock
+<span class="nc" id="L104">    	List&lt;MarketStoreBean&gt; mockResults = new ArrayList&lt;MarketStoreBean&gt;();</span>
+
+    	//引数
+<span class="nc" id="L107">    	MarketStoreBean paramBean = new MarketStoreBean();</span>
+    	
+<span class="nc" id="L109">    	Mockito.when(this.mapper.select(paramBean)).thenReturn(mockResults);</span>
+    	
+//    	List&lt;MarketStoreListForm&gt; beanList = null;
+<span class="nc" id="L112">    	MarketStoreListForm inForm = new MarketStoreListForm() ;</span>
+<span class="nc" id="L113">    	MarketStoreListForm resultForm = new MarketStoreListForm() ;</span>
+<span class="nc" id="L114">    	inForm.setAddress(&quot;1&quot;);</span>
+<span class="nc" id="L115">    	inForm.setStoreName(&quot;2&quot;);</span>
+		try {
+<span class="nc" id="L117">			resultForm =  service.select(inForm);</span>
+			//如果没有在上面catch到异常，代码继续往下走，说明测试失败，直接运行测试失败代码
+<span class="nc" id="L119">			fail(&quot;测试失败&quot;);</span>
+<span class="nc" id="L120">		} catch (Exception e) {</span>
+<span class="nc" id="L121">			assertEquals(&quot;検索結果はありません。&quot;, e.getMessage());</span>
+		}
+<span class="nc" id="L123">    }</span>
+    
+    
+    
+    /**
+     * insert
+     * 
+     * 検索件数：1件
+     */
+    @Test
+    public void test_marketCRUD_003_NO() 
+    {
+    	
+    	//検索結果Mock
+<span class="nc" id="L137">    	List&lt;MarketStoreBean&gt; mockResults = new ArrayList&lt;MarketStoreBean&gt;();</span>
+
+<span class="nc" id="L139">    	mockResults.add(createBean(&quot;1&quot;));</span>
+<span class="nc" id="L140">    	mockResults.add(createBean(&quot;2&quot;));</span>
+<span class="nc" id="L141">    	mockResults.add(createBean(&quot;3&quot;));</span>
+    	
+    	//引数
+//    	MarketStoreBean paramBean = new MarketStoreBean();
+    	
+<span class="nc" id="L146">    	Mockito.when(this.mapper.selectMaxId()).thenReturn(&quot;0&quot;);</span>
+    	
+//    	List&lt;MarketStoreListForm&gt; beanList = null;
+<span class="nc" id="L149">    	MarketStoreForm inForm = new MarketStoreForm() ;</span>
+<span class="nc" id="L150">    	MarketStoreListForm resultForm = new MarketStoreListForm() ;</span>
+<span class="nc" id="L151">    	inForm.setAddress(&quot;1&quot;);</span>
+<span class="nc" id="L152">    	inForm.setStoreName(&quot;2&quot;);</span>
+<span class="nc" id="L153">    	inForm.setPhone(&quot;2&quot;);</span>
+<span class="nc" id="L154">    	inForm.setStartDay(&quot;2000-2-20&quot;);</span>
+<span class="nc" id="L155">    	inForm.setFinishDay(&quot;2111-11-11&quot;);</span>
+    	
+		try {
+<span class="nc" id="L158">			service.insert(inForm);</span>
+						
+<span class="nc" id="L160">		} catch (Exception e) {</span>
+<span class="nc" id="L161">			e.printStackTrace();</span>
+		}
+<span class="nc" id="L163">    }</span>
+    
+    
+    
+    /**
+     * editinit
+     * 
+     * 検索件数：3件
+     */
+    @Test
+    public void test_marketCRUD_004_OK() 
+    {
+    	
+    	//検索結果Mock
+<span class="nc" id="L177">    	List&lt;MarketStoreBean&gt; mockResults = new ArrayList&lt;MarketStoreBean&gt;();</span>
+
+<span class="nc" id="L179">    	mockResults.add(createBean(&quot;1&quot;));</span>
+<span class="nc" id="L180">    	mockResults.add(createBean(&quot;2&quot;));</span>
+<span class="nc" id="L181">    	mockResults.add(createBean(&quot;3&quot;));</span>
+    	
+    	//引数
+//    	MarketStoreBean paramBean = new MarketStoreBean();
+    	
+<span class="nc" id="L186">    	Mockito.when(this.mapper.select(any())).thenReturn(mockResults);</span>
+    	
+//    	List&lt;MarketStoreListForm&gt; beanList = null;
+<span class="nc" id="L189">      	MarketStoreForm inForm = new MarketStoreForm() ;</span>
+<span class="nc" id="L190">    	MarketStoreForm resultForm = new MarketStoreForm() ;</span>
+<span class="nc" id="L191">    	inForm.setAddress(&quot;1&quot;);</span>
+<span class="nc" id="L192">    	inForm.setStoreName(&quot;2&quot;);</span>
+<span class="nc" id="L193">    	inForm.setStoreId(&quot;3&quot;);</span>
+		try {
+<span class="nc" id="L195">			resultForm =  service.editInit(inForm);</span>
+//	    	}
+<span class="nc" id="L197">		} catch (Exception e) {</span>
+<span class="nc" id="L198">			e.printStackTrace();</span>
+		}
+<span class="nc" id="L200">    }</span>
+    
+    
+    
+    /**
+     * update
+     * 
+     * 検索件数：3件
+     */
+    @Test
+    public void test_marketCRUD_005_OK() 
+    {
+    	
+    	//検索結果Mock
+//    	List&lt;MarketStoreBean&gt; mockResults = new ArrayList&lt;MarketStoreBean&gt;();
+
+    	
+//    	List&lt;MarketStoreListForm&gt; beanList = null;
+<span class="nc" id="L218">      	MarketStoreForm inForm = new MarketStoreForm() ;</span>
+//    	MarketStoreForm resultForm = new MarketStoreForm() ;
+<span class="nc" id="L220">    	inForm.setStoreId(&quot;00000003&quot;);</span>
+<span class="nc" id="L221">    	inForm.setStoreName(&quot;2&quot;);</span>
+<span class="nc" id="L222">    	inForm.setAddress(&quot;1&quot;);</span>
+<span class="nc" id="L223">    	inForm.setPhone(&quot;123412345&quot;);</span>
+<span class="nc" id="L224">		inForm.setStartDay(&quot;2000-11-11&quot;);</span>
+<span class="nc" id="L225">		inForm.setFinishDay(&quot;2020-11-11&quot;);</span>
+		try {
+<span class="nc" id="L227">			 service.update(inForm);</span>
+//	    	}
+<span class="nc" id="L229">		} catch (Exception e) {</span>
+<span class="nc" id="L230">			e.printStackTrace();</span>
+<span class="nc" id="L231">			fail();</span>
+		}
+<span class="nc" id="L233">    }</span>
+//    /**
+//     * 正常終了
+//     * 
+//     * 検索件数：1件(検索結果と条件が一致する)
+//     */
+//    @Test
+//    public void test_marketCRUD_02_OK() 
+//    {
+//    	
+//    	//検索結果Mock
+//    	List&lt;MarketStoreBean&gt; mockResults = new ArrayList&lt;MarketStoreBean&gt;();
+//
+//    	mockResults.add(createBean(&quot;1&quot;));
+//    	
+//    	//引数
+//    	MarketStoreBean paramBean = new MarketStoreBean();
+//    	paramBean.setEmployeeId(&quot;1&quot;);
+//    	
+//    	Mockito.when(this.mapper.select(paramBean)).thenReturn(mockResults);
+//    	
+//    	List&lt;MarketStoreBean&gt; beanList = null;
+//		try {
+//			ReadDataBaseForm form = new ReadDataBaseForm();
+//			form.setEmployeeId(&quot;1&quot;);
+//			beanList = service.readDataFromMysql(form);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//    	
+//    	assertEquals(1, beanList.size());
+//    	
+//    }
+//
+//    /**
+//     * 正常終了
+//     * 
+//     * 検索件数：1件(※検索結果と条件が不一致です。)
+//     */
+//    @Test
+//    public void test_marketCRUD_03_OK() 
+//    {
+//    	
+//    	//検索結果Mock
+//    	List&lt;MarketStoreBean&gt; mockResults = new ArrayList&lt;MarketStoreBean&gt;();
+//
+//    	mockResults.add(createBean(&quot;9&quot;));
+//    	
+//    	//引数
+//    	MarketStoreBean paramBean = new MarketStoreBean();
+//    	paramBean.setEmployeeId(&quot;3&quot;);
+//    	
+//    	Mockito.when(this.mapper.select(paramBean)).thenReturn(mockResults);
+//    	
+//    	List&lt;MarketStoreBean&gt; beanList = null;
+//		try {
+//			
+//			ReadDataBaseForm form = new ReadDataBaseForm();
+//			form.setEmployeeId(&quot;3&quot;);
+//			beanList = service.readDataFromMysql(form);
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//    	
+//    	assertEquals(1, beanList.size());
+//    	
+//    }
+//    /**
+//     * 異常終了（検索結果がありません。）
+//     * 
+//     */
+//    @Test
+//    public void test_marketCRUD_01_NG() 
+//    {
+//    	System.out.println(&quot;■test_marketCRUD_01_NG 開始&quot;);
+//    	
+//    	MarketStoreBean bean = new MarketStoreBean();
+//    	bean.setEmployeeId(&quot;1111&quot;);
+//    	List&lt;MarketStoreBean&gt; mockResults = new ArrayList&lt;MarketStoreBean&gt;();
+//        when(this.mapper.select(bean)).thenReturn(mockResults);
+//    	
+//        try {
+//			ReadDataBaseForm form = new ReadDataBaseForm();
+//			form.setEmployeeId(&quot;1111&quot;);
+//			List&lt;MarketStoreBean&gt; beanList = service.readDataFromMysql(form);
+//		} catch (Exception e) {
+//	    	assertEquals(&quot;検索結果がありません。&quot;, e.getMessage());
+//		}
+//        
+//    	
+//    	System.out.println(&quot;■test_marketCRUD_01_NG 終了&quot;);
+//    }
+//    
+//    private MarketStoreBean createBean(String key) {
+//    	MarketStoreBean mockBean = new MarketStoreBean();
+//    	mockBean.setStoreId(key);
+//    	mockBean.setStoreName(&quot;店&quot;+key);
+//    	mockBean.setAddress(&quot;aaaaaaa&quot;);
+//    	mockBean.setPhone(&quot;12345&quot;);
+//    	mockBean.setStartDay(&quot;2000-1-11&quot;);
+//    	mockBean.setFinishDay(&quot;2022-1-22&quot;);
+//
+//    	
+//    	return mockBean;
+//    }
+    
+    private MarketStoreBean createBean(String key) {
+<span class="nc" id="L341">    	MarketStoreBean mockBean = new MarketStoreBean();</span>
+<span class="nc" id="L342">    	mockBean.setStoreId(key);</span>
+<span class="nc" id="L343">    	mockBean.setStoreName(&quot;社員&quot;+key);</span>
+<span class="nc" id="L344">    	mockBean.setAddress(&quot;aaaaaaa&quot;);</span>
+    	
+<span class="nc" id="L346">    	return mockBean;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

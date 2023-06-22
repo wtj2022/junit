@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CmsUtils.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.utils</a> &gt; <span class="el_source">CmsUtils.java</span></div><h1>CmsUtils.java</h1><pre class="source lang-java linenums">package com.utils;
+
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.cms.common.Gender;
+
+<span class="nc" id="L17">public class CmsUtils {</span>
+
+	/**
+	 * ラジオボタンの作成
+	 * 
+	 * @return ラジオボタンの初期値
+	 */
+	public static List&lt;Gender&gt; createGenders() {
+		// 社員区分（ラジオボタン）
+<span class="nc" id="L26">		List&lt;Gender&gt; genders = new ArrayList&lt;Gender&gt;() {</span>
+			{
+<span class="nc" id="L28">				add(Gender.of(&quot;radioKbn&quot;, &quot;社員&quot;, &quot;社員&quot;));</span>
+<span class="nc" id="L29">				add(Gender.of(&quot;radioKbn&quot;, &quot;BP&quot;, &quot;BP&quot;));</span>
+			}
+		};
+<span class="nc" id="L32">		return genders;</span>
+	}
+	
+	/**
+	 * システム日付を取得する
+	 * 
+	 * @return ラジオボタンの初期値
+	 */
+	public static Timestamp getSystemDate() {
+<span class="nc" id="L41">		return new Timestamp(System.currentTimeMillis());</span>
+	}
+	
+	/**
+	 * 文字列を日付にフォーマットする
+	 * 
+	 * @return フォーマット後の日付
+	 */
+	public static Date FormatToDate(String dt) {
+<span class="nc" id="L50">		SimpleDateFormat formatter = new SimpleDateFormat(&quot;yyyy/MM/dd&quot;, Locale.JAPAN);</span>
+
+<span class="nc" id="L52">		Date retDate = null;</span>
+		try {
+<span class="nc" id="L54">			retDate = formatter.parse(dt);</span>
+<span class="nc" id="L55">		} catch (ParseException e) {</span>
+<span class="nc" id="L56">			return null;</span>
+		}
+<span class="nc" id="L58">	    return retDate;</span>
+	}
+	
+	/**
+	 * 文字列を日付にフォーマットする
+	 * 
+	 * @param dt 日付（文字列）
+	 * @param format フォーマット
+	 * @return フォーマット後の日付
+	 */
+	public static Date FormatToDate(String dt, String format) {
+<span class="nc" id="L69">		SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.JAPAN);</span>
+
+<span class="nc" id="L71">		Date retDate = null;</span>
+		try {
+<span class="nc" id="L73">			retDate = formatter.parse(dt);</span>
+<span class="nc" id="L74">		} catch (ParseException e) {</span>
+<span class="nc" id="L75">			return null;</span>
+		}
+<span class="nc" id="L77">	    return retDate;</span>
+	}
+	/**
+	 * 文字列を日付にフォーマットする
+	 * 
+	 * @return フォーマット後の日付
+	 */
+	public static Timestamp FormatToTimestame(String dt) {
+
+<span class="nc" id="L86">	    SimpleDateFormat dateFormat = new SimpleDateFormat(&quot;yyyy-MM-dd hh:mm:ss:SSS&quot;);</span>
+	    Date parsedDate;
+		try {
+<span class="nc" id="L89">			parsedDate = dateFormat.parse(dt);</span>
+<span class="nc" id="L90">		} catch (ParseException e) {</span>
+<span class="nc" id="L91">			return null;</span>
+		}
+<span class="nc" id="L93">	    return new java.sql.Timestamp(parsedDate.getTime());</span>
+	}
+	
+	/**
+	 * 计算时差 根据 long 返回时间点
+	 * 
+	 * @param millisecond
+	 * @return string 0天0时11分55秒
+	 */
+	public static String parseMillisecone(long millisecond) {
+<span class="nc" id="L103">	    long yushu_day = millisecond % (1000 * 60 * 60 * 24);</span>
+<span class="nc" id="L104">	    return String.valueOf(yushu_day / (1000 * 60 * 60));</span>
+	}
+	
+
+	/**
+	 * 日付を文字列に変更する
+	 * 
+	 * @param ft フォーマット
+	 * @return フォーマット後の日付
+	 */
+	public static String formatDateToString(Date dt ,String format) {
+<span class="nc" id="L115">		DateFormat dateFormat = new SimpleDateFormat(format);  </span>
+<span class="nc" id="L116">		return dateFormat.format(dt);  </span>
+	}
+	
+
+	/**
+	 * 日付を文字列に変更する
+	 * 
+	 * @return フォーマット後の日付
+	 */
+	public static java.sql.Date getToday() {
+<span class="nc" id="L126">		LocalDate dt = LocalDate.now();</span>
+<span class="nc" id="L127">		return java.sql.Date.valueOf(dt);  </span>
+	}
+	
+
+	/**
+	 * ラジオボタンの作成
+	 * 
+	 * @param val フォーマット対象
+	 * @return フォーマット後の文字列
+	 */
+	public static String formatEmptyToNull(String val) {
+		
+<span class="nc bnc" id="L139" title="All 2 branches missed.">		if (StringUtils.isEmpty(val)) {</span>
+<span class="nc" id="L140">			return null;</span>
+		}
+<span class="nc" id="L142">		return val;</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

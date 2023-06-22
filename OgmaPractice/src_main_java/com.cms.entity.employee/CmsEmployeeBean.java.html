@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CmsEmployeeBean.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.entity.employee</a> &gt; <span class="el_source">CmsEmployeeBean.java</span></div><h1>CmsEmployeeBean.java</h1><pre class="source lang-java linenums">package com.cms.entity.employee;
+
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.Data;
+
+<span class="nc bnc" id="L11" title="All 170 branches missed.">@Data</span>
+@Table(name = &quot;cms_employee&quot;)
+public class CmsEmployeeBean {
+	@Id
+	@Column(name = &quot;employeeId&quot;)
+	private String employeeId;
+	
+	@Column(name = &quot;name&quot;)
+	private String name;
+	
+	@Column(name = &quot;sex&quot;)
+	private String sex;
+	private String sexForList;
+	
+	@Column(name = &quot;birthday&quot;)
+	private String birthday;
+	
+	@Column(name = &quot;address&quot;)
+	private String address;
+	
+	@Column(name = &quot;phone&quot;)
+	private String phone;
+	
+	@Column(name = &quot;joiningDate&quot;)
+	private String joiningDate;
+	
+	@Column(name = &quot;mail&quot;)
+	private String mail;
+	
+	@Column(name = &quot;jobType&quot;)
+	private String jobType;
+	
+	@Column(name = &quot;jobLevel&quot;)
+	private String jobLevel;
+	
+	@Column(name = &quot;employeeKbn&quot;)
+	private String employeeKbn;
+	private String employeeKbnForList;
+
+	@Column(name = &quot;salary&quot;)
+	private BigDecimal salary;
+	
+	@Column(name = &quot;employeeType&quot;)
+	private String employeeType;
+	
+	@Column(name = &quot;hasTax&quot;)
+	private String hasTax;
+	
+	@Column(name = &quot;topWorkHour&quot;)
+	private int topWorkHour;
+	
+	@Column(name = &quot;downWorkHour&quot;)
+	private int downWorkHour;
+	
+	@Column(name = &quot;loginId&quot;)
+	private String loginId;
+	
+	@Column(name = &quot;password&quot;)
+	private String password;
+	
+	@Column(name = &quot;registDay&quot;)
+	private String registDay;
+	
+	@Column(name = &quot;updateDay&quot;)
+	private String updateDay;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

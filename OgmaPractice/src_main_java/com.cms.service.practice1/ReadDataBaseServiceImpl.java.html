@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>ReadDataBaseServiceImpl.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.service.practice1</a> &gt; <span class="el_source">ReadDataBaseServiceImpl.java</span></div><h1>ReadDataBaseServiceImpl.java</h1><pre class="source lang-java linenums">package com.cms.service.practice1;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.thymeleaf.util.StringUtils;
+
+import com.cms.entity.employee.CmsEmployeeBean;
+import com.cms.form.practice1.ReadDataBaseForm;
+import com.cms.mapper.practice1.Practice1Mapper;
+import com.exception.BusinessException;
+
+/**
+ * 社員情報取得サービス
+ */
+@Service
+<span class="fc" id="L18">public class ReadDataBaseServiceImpl implements ReadDataBaseService {</span>
+
+	@Autowired
+	Practice1Mapper mapper;
+
+	/**
+	 * 社員情報を検索する
+	 * 
+	 * @param form 社員検索画面フォーム
+	 * @return 社員Beanリスト
+	 * @throws Exception 
+	 */	
+	@Override
+	public List&lt;CmsEmployeeBean&gt; readDataFromMysql(ReadDataBaseForm form) throws Exception {
+		
+<span class="nc" id="L33">		CmsEmployeeBean param = new CmsEmployeeBean();</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">		if (!StringUtils.isEmpty(form.getEmployeeId()))	{</span>
+<span class="nc" id="L35">			param.setEmployeeId(form.getEmployeeId());</span>
+		}
+		
+<span class="nc bnc" id="L38" title="All 2 branches missed.">		if (!StringUtils.isEmpty(form.getEmployeeName()))	{</span>
+<span class="nc" id="L39">			param.setName(form.getEmployeeName());</span>
+		}
+<span class="nc" id="L41">		List&lt;CmsEmployeeBean&gt; results = mapper.select(param);</span>
+
+//		for(CmsEmployeeBean b : results) {
+//			b.setAddress(&quot;aaaaaaa&quot;);
+//		}
+<span class="nc bnc" id="L46" title="All 2 branches missed.">		if (results.size() == 0) {</span>
+<span class="nc" id="L47">			throw new BusinessException(&quot;検索結果がありません。&quot;);</span>
+		}
+		
+<span class="nc" id="L50">		return results;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

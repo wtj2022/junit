@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CmsEmployeeForm.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.form.cmsemployee</a> &gt; <span class="el_source">CmsEmployeeForm.java</span></div><h1>CmsEmployeeForm.java</h1><pre class="source lang-java linenums">package com.cms.form.cmsemployee;
+
+import java.sql.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.Length;
+
+import com.cms.entity.employee.CmsEmployeeBean;
+import com.cms.form.BaseForm;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * ユーザー情報 検索用リクエストデータ
+ */
+<span class="nc" id="L24">@Getter</span>
+<span class="nc" id="L25">@Setter</span>
+<span class="nc bnc" id="L26" title="All 214 branches missed.">@Data</span>
+public class CmsEmployeeForm extends BaseForm {
+
+	/* 検索結果 */
+	private List&lt;CmsEmployeeBean&gt; results1;
+
+	private String employeeId;
+
+	@NotEmpty
+	@Length(max=8)
+	private String name;
+	private String type;
+
+	//職種選択リスト
+	@NotEmpty
+	private String selectedJobType;
+	private Map&lt;String, String&gt; jobTypeList;
+
+	//性別選択リスト
+	@NotEmpty
+	private String selectedSexy;
+	private Map&lt;String, String&gt; sexyList;
+	
+	@NotEmpty
+	private String birthday;
+
+	@NotEmpty
+	@Length(max=50)
+	private String address;
+	
+	//電話番号チェック
+	@Pattern(regexp = &quot;0\\d{1,3}\\d{1,4}\\d{4}&quot;, message = &quot;電話番号の形式で入力してください(99999999999)&quot;)
+	private String phone;
+
+	@NotEmpty
+	private String joiningDate;
+
+	@Email
+	@Length(max=100)
+	private String mail;
+	private String jobType;
+	private String jobLevel;
+
+    @Min(value = 140,message = &quot;勤務時間上限は220時間となります。&quot;)
+	private String topWorkHour;
+
+    @Min(value = 140,message = &quot;勤務時間下限は140時間となります。&quot;)
+	private String downWorkHour;
+	
+	@NotEmpty
+	@Length(max=8)
+	private String salary;
+
+	private Date registrationDate;
+	private Date updateDate;
+
+	//社員区分
+	private Map&lt;String, String&gt; employeeKbnMap;
+	private String selectedEmployeeKbn;
+	
+	//社員種別
+	@NotEmpty
+	private String selectedEmployeeType;
+	private Map&lt;String, String&gt; employeeTypeList;
+	
+	//税金有無
+	@NotEmpty
+	private String selectedHasTax;
+	private Map&lt;String, String&gt; hasTaxList;
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>LoginServiceImpl.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.service.login</a> &gt; <span class="el_source">LoginServiceImpl.java</span></div><h1>LoginServiceImpl.java</h1><pre class="source lang-java linenums">package com.cms.service.login;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import com.cms.entity.employee.CmsEmployeeBean;
+import com.cms.form.login.LoginForm;
+import com.cms.mapper.employee.CmsEmployeeMapper;
+
+/**
+ * ユーザー情報 Service
+ */
+@Service
+<span class="fc" id="L17">public class LoginServiceImpl implements LoginService {</span>
+
+	/****** Mapper ******/
+	@Autowired
+	CmsEmployeeMapper mapper;
+
+	/**
+	 * ユーザー情報検索 @param userSearchRequest リクエストデータ
+	 * 
+	 * @return 検索結果
+	 */
+	public LoginForm selectLoginInfo(LoginForm form) {
+
+		// ログイン情報を検索する
+<span class="nc" id="L31">		CmsEmployeeBean paramBean = new CmsEmployeeBean();</span>
+<span class="nc" id="L32">		paramBean.setLoginId(form.getLoginId());</span>
+
+<span class="nc" id="L34">		List&lt;CmsEmployeeBean&gt; searchResults = mapper.select(paramBean);</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">		if (!CollectionUtils.isEmpty(searchResults)) {</span>
+
+<span class="nc" id="L37">			form.setResults(searchResults);</span>
+		}
+
+<span class="nc" id="L40">		return form;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CmsCostViewController.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.controller.cost</a> &gt; <span class="el_source">CmsCostViewController.java</span></div><h1>CmsCostViewController.java</h1><pre class="source lang-java linenums">package com.cms.controller.cost;
+
+import javax.transaction.SystemException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.cms.common.UrlConst;
+import com.cms.controller.base.ControllerBase;
+import com.cms.form.cost.CmsCostForm;
+import com.cms.mapper.common.CommonMapper;
+import com.cms.service.cost.CmsCostService;
+import com.cms.service.login.LoginService;
+
+/**
+ * ログイン コントローラー
+ */
+@Controller
+@RequestMapping(value = &quot;/cost/cmscostview&quot;)
+<span class="fc" id="L25">public class CmsCostViewController extends ControllerBase {</span>
+
+	@Autowired
+	CmsCostService service;
+
+	@Autowired
+	LoginService userService;
+
+	@Autowired
+	CommonMapper commonMapper;
+
+	/**
+	 * ユーザ画面初期化
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	private String init(Model model, @ModelAttribute(&quot;selectedId&quot;) String selectedId) {
+
+		try {
+<span class="nc" id="L43">			CmsCostForm form = new CmsCostForm();</span>
+<span class="nc" id="L44">			form.setCostId(selectedId);</span>
+	
+<span class="nc" id="L46">			CmsCostForm initForm = service.readInit(form);</span>
+<span class="nc" id="L47">			model.addAttribute(&quot;form&quot;, initForm);</span>
+<span class="nc" id="L48">		} catch (SystemException se) {</span>
+<span class="nc" id="L49">			System.out.println(se.getMessage());</span>
+		}
+		
+<span class="nc" id="L52">		return UrlConst.cmscostview;</span>
+	}
+	
+	/**
+	 * 「戻る」ボタンを押下する
+	 */
+	@RequestMapping(params = &quot;gotoList&quot;, method = RequestMethod.POST)
+	public String gotoList(@ModelAttribute(&quot;form&quot;) CmsCostForm form, BindingResult result,
+			Model model) {
+
+<span class="nc" id="L62">		return UrlConst.redirect_cmscostlist;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

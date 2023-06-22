@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>ControllerBase.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.controller.base</a> &gt; <span class="el_source">ControllerBase.java</span></div><h1>ControllerBase.java</h1><pre class="source lang-java linenums">package com.cms.controller.base;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.transaction.SystemException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+//import org.apache.logging.log4j.LogManager;
+//import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.cms.entity.employee.CmsEmployeeBean;
+import com.cms.form.cmsemployee.CmsEmployeeForm;
+import com.cms.form.cmsemployee.CmsEmployeeListForm;
+import com.cms.service.model.CmsSelectEmployeeService;
+import com.utils.ServiceUtils;
+
+/**
+ * 新規コントローラ
+ */
+@Component
+<span class="fc" id="L29">public class ControllerBase {</span>
+
+	@Autowired
+	CmsSelectEmployeeService employeeService;
+	
+	@Autowired
+	ServiceUtils serviceUtils;
+
+	/**
+	 * メニューをクリックする
+	 */
+	@RequestMapping(value = &quot;&quot;, params = &quot;transitionTo&quot;, method = RequestMethod.POST)
+	public String transitionTo(Model model, @RequestParam String transitionTo) {
+		// 画面データ初期化
+<span class="nc" id="L43">		return &quot;redirect:&quot; + transitionTo;</span>
+	}
+
+	/**
+	 * 共通項目設定(編集画面)
+	 * 
+	 * @param form    社員編集画面フォーム
+	 * @param initFlg 画面初期化フラグ
+	 * @throws SystemException 
+	 */
+	public void setCommonItem(CmsEmployeeForm form, boolean initFlg) {
+
+		try {
+			// 選択リスト{EMPLOYEE_TYPE:社員種別}
+<span class="nc" id="L57">			form.setEmployeeKbnMap(serviceUtils.getGeneralMastInfo(&quot;EMPLOYEE_KBN&quot;));</span>
+	
+			// 選択リスト{SEXY:性別}
+<span class="nc" id="L60">			form.setSexyList(serviceUtils.getGeneralMastInfo(&quot;SEXY&quot;));</span>
+	
+			// 選択リスト{JOB_TYPE:職種}
+<span class="nc" id="L63">			form.setJobTypeList(serviceUtils.getGeneralMastInfo(&quot;JOB_TYPE&quot;));</span>
+			
+			// 選択リスト{EMPLOYEE_TYPE:社員種別}
+<span class="nc" id="L66">			form.setEmployeeTypeList(serviceUtils.getGeneralMastInfo(&quot;EMPLOYEE_TYPE&quot;));</span>
+			
+			// 選択リスト{TAX_FLG:税金有無}
+<span class="nc" id="L69">			form.setHasTaxList(serviceUtils.getGeneralMastInfo(&quot;TAX_FLG&quot;));</span>
+	
+<span class="nc bnc" id="L71" title="All 2 branches missed.">			if (initFlg) {</span>
+<span class="nc" id="L72">				form.setSelectedEmployeeKbn(&quot;0&quot;);</span>
+<span class="nc" id="L73">				form.setSelectedSexy(&quot;0&quot;);</span>
+<span class="nc" id="L74">				form.setSelectedJobType(&quot;J5&quot;);</span>
+<span class="nc" id="L75">				form.setSelectedEmployeeType(&quot;0&quot;);</span>
+<span class="nc" id="L76">				form.setSelectedHasTax(&quot;0&quot;);</span>
+			}
+		
+<span class="nc" id="L79">		} catch (SystemException se) {</span>
+<span class="nc" id="L80">			System.out.println(se.getMessage());</span>
+		}
+<span class="nc" id="L82">	}</span>
+
+	/**
+	 * 共通項目設定(一覧画面)
+	 * 
+	 * @param form    社員編集画面フォーム
+	 * @param initFlg 初期化フラグ
+	 * @throws SystemException 
+	 */
+	public void setCommonItem(CmsEmployeeListForm form, boolean initFlg) throws SystemException  {
+
+		// 選択リスト{EMPLOYEE_TYPE:社員種別}
+<span class="nc" id="L94">		Map&lt;String, String&gt; genderMap = serviceUtils.getGeneralMastInfo(&quot;EMPLOYEE_KBN&quot;);</span>
+<span class="nc" id="L95">		genderMap.put(&quot;2&quot;, &quot;すべて&quot;);</span>
+<span class="nc" id="L96">		form.setEmployeeKbnMap(genderMap);</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">		if (initFlg) {</span>
+<span class="nc" id="L98">			form.setSelectedEmployeeKbn(&quot;0&quot;);</span>
+		}
+
+<span class="nc" id="L101">		Map&lt;String, String&gt; sexMap = serviceUtils.getGeneralMastInfo(&quot;SEXY&quot;);</span>
+<span class="nc" id="L102">		sexMap.put(&quot;2&quot;, &quot;すべて&quot;);</span>
+		// 選択リスト{SEXY:性別}
+<span class="nc" id="L104">		form.setSexyList(sexMap);</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">		if (initFlg) {</span>
+<span class="nc" id="L106">			form.setSelectedSexy(&quot;0&quot;);</span>
+		}
+
+		// 選択リスト{JOB_TYPE:職種}
+<span class="nc" id="L110">		form.setJobTypeList(serviceUtils.getGeneralMastInfo(&quot;JOB_TYPE&quot;));</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">		if (initFlg) {</span>
+<span class="nc" id="L112">			form.setSelectedJobType(&quot;J5&quot;);</span>
+		}
+<span class="nc" id="L114">	}</span>
+
+	// ----------PopUp画面（社員選択画面）・検索ボタン start----------
+
+	@PostMapping(value = &quot;/searchEmployees&quot;)
+	@ResponseBody
+	public List&lt;CmsEmployeeBean&gt; searchEmployees(@RequestParam Map&lt;String, Object&gt; params) {
+
+<span class="nc" id="L122">		CmsEmployeeBean bean = new CmsEmployeeBean();</span>
+<span class="nc" id="L123">		bean.setName(params.get(&quot;name&quot;).toString());</span>
+<span class="nc" id="L124">		List&lt;CmsEmployeeBean&gt; result = employeeService.select(bean);</span>
+
+<span class="nc" id="L126">		return result;</span>
+	}
+	// ----------PopUp画面（社員選択画面）・検索ボタン end ----------
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

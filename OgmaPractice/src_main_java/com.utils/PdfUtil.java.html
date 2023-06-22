@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>PdfUtil.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.utils</a> &gt; <span class="el_source">PdfUtil.java</span></div><h1>PdfUtil.java</h1><pre class="source lang-java linenums">package com.utils;
+
+import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
+import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
+
+
+<span class="nc" id="L13">public class PdfUtil {</span>
+
+	/**
+     *PDFファイル作成
+     */
+	public final static void printPdf(String tmpFilePath) {
+
+//		printPdf(&quot;C:/Users/81804/Desktop/output/PdfTemple.pdf&quot;);
+		try {
+			//PDFフォーム取得
+<span class="nc" id="L23">			PDDocument pdfDocument = Loader.loadPDF(new File(tmpFilePath));</span>
+
+			// 帳票フォーム内容を取得する
+<span class="nc" id="L26">			PDAcroForm acroForm = pdfDocument.getDocumentCatalog().getAcroForm();</span>
+
+<span class="nc bnc" id="L28" title="All 2 branches missed.">			if (acroForm != null) {</span>
+                //電話
+<span class="nc" id="L30">				PDTextField phone = (PDTextField) acroForm.getField(&quot;phone&quot;);</span>
+<span class="nc" id="L31">				phone.setValue(&quot;0101234567&quot;);</span>
+                //Fax
+<span class="nc" id="L33">				PDTextField fax = (PDTextField) acroForm.getField(&quot;fax&quot;);</span>
+<span class="nc" id="L34">				fax.setValue(&quot;0101234568&quot;);</span>
+                //Fax
+<span class="nc" id="L36">				PDTextField amount = (PDTextField) acroForm.getField(&quot;amount&quot;);</span>
+<span class="nc" id="L37">				amount.setValue(&quot;9999999&quot;);</span>
+			}
+			
+			// システム日時を取得する
+<span class="nc" id="L41">			LocalDateTime now = LocalDateTime.now();</span>
+<span class="nc" id="L42">			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;yyyyMMddHHmmss&quot;);</span>
+<span class="nc" id="L43">			String sysDate = now.format(formatter);</span>
+			
+			//PDF出力
+<span class="nc" id="L46">			pdfDocument.save(&quot;C:/work/pdf/output/請求書_&quot; + sysDate + &quot;.pdf&quot;);</span>
+
+<span class="nc" id="L48">		} catch (Exception e) {</span>
+<span class="nc" id="L49">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L51">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

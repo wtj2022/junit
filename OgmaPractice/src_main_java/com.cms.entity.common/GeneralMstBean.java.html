@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>GeneralMstBean.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.entity.common</a> &gt; <span class="el_source">GeneralMstBean.java</span></div><h1>GeneralMstBean.java</h1><pre class="source lang-java linenums">package com.cms.entity.common;
+
+import java.sql.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * ユーザー情報 Entity
+ */
+<span class="nc" id="L16">@Getter</span>
+<span class="nc" id="L17">@Setter</span>
+@Entity
+@Table(name = &quot;cms_general_mst&quot;)
+<span class="nc" id="L20">public class GeneralMstBean {</span>
+	@Id
+	@Column(name = &quot;generalKey&quot;)
+	private String generalKey;
+	@Column(name = &quot;generalId&quot;)
+	private String generalId;
+	@Column(name = &quot;generalName&quot;)
+	private String generalName;
+	@Column(name = &quot;generalExplanation&quot;)
+	private String generalExplanation;
+	@Column(name = &quot;registrationDate&quot;)
+	private Date registrationDate;
+	@Column(name = &quot;updateDate&quot;)
+	private Date updateDate;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

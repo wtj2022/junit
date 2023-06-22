@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CmsWorkHourForm.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.form.cmsworkhour</a> &gt; <span class="el_source">CmsWorkHourForm.java</span></div><h1>CmsWorkHourForm.java</h1><pre class="source lang-java linenums">package com.cms.form.cmsworkhour;
+
+import java.sql.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+
+import com.cms.common.Gender;
+import com.cms.entity.cmsworkhour.CmsWorkHourBean;
+import com.cms.entity.common.MCodeMstBean;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * ユーザー情報 検索用リクエストデータ
+ */
+<span class="nc" id="L22">@Getter</span>
+<span class="nc" id="L23">@Setter</span>
+<span class="nc bnc" id="L24" title="All 198 branches missed.">@Data</span>
+public class CmsWorkHourForm {
+
+	/* 検索欄の項目 */
+	private List&lt;MCodeMstBean&gt; codeList;
+
+	/* 検索条件＆登録情報 */
+	private CmsWorkHourBean record;
+
+	/* 検索結果 */
+	private List&lt;CmsWorkHourBean&gt; results;
+
+	private String employeeId;
+
+	@NotEmpty
+	private String name;
+	private String type;
+
+	//職種選択リスト
+	@NotEmpty
+	private String selectedJobType;
+	private Map&lt;String, String&gt; jobTypeList;
+
+	//性別選択リスト
+	@NotEmpty
+	private String selectedSexy;
+	private Map&lt;String, String&gt; sexyList;
+	
+	@NotEmpty
+	private String birthday;
+
+	@NotEmpty
+	private String address;
+	
+	//電話番号チェック
+	@Pattern(regexp = &quot;^0\\d{10,10}$&quot;, message=&quot;{error.pattern.unmatch}&quot;)
+	private String phone;
+
+	@NotEmpty
+	private String joiningDate;
+
+	@Email
+	private String mail;
+	private String jobType;
+	private String jobLevel;
+	private String loginId;
+	private String password;
+	private Date registrationDate;
+	private Date updateDate;
+	private String companyId;
+
+	//社員区分
+	private List&lt;Gender&gt; genders;
+	private String selectGender;
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

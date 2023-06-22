@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CmsCostForm.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.form.cost</a> &gt; <span class="el_source">CmsCostForm.java</span></div><h1>CmsCostForm.java</h1><pre class="source lang-java linenums">package com.cms.form.cost;
+
+import java.util.Date;
+import java.util.Map;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Past;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.cms.form.BaseForm;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 費用 検索用リクエストデータ
+ */
+<span class="nc" id="L21">@Getter</span>
+<span class="nc" id="L22">@Setter</span>
+<span class="nc bnc" id="L23" title="All 92 branches missed.">@Data</span>
+public class CmsCostForm  extends BaseForm {
+	
+    //費用ID
+	private String costId;
+	
+    //費用発生日
+	@DateTimeFormat(pattern = &quot;yyyy-MM-dd&quot;)
+	@Past
+	private Date costDay;
+	
+    //費用コメント
+	private String costNote;
+		
+    //費用金額
+	@Min(1)
+	private int costAmount;
+	
+    //税金備考
+	private String taxNote;
+	
+	//社員ID
+	private String employeeId;
+	//社員名
+	private String employeeName;
+
+	//新規フラグ（true:新規;false:編集）
+	private boolean newFlg;
+	
+    //費用種別
+	private String selectedCostType;
+	private Map&lt;String, String&gt; costTypeList;
+	
+	//税金有無
+	@NotEmpty
+	private String hasTax;
+	private Map&lt;String, String&gt; hasTaxList;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CalculateInvoiceServiceTest.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">com.sample.practice3</a> &gt; <span class="el_source">CalculateInvoiceServiceTest.java</span></div><h1>CalculateInvoiceServiceTest.java</h1><pre class="source lang-java linenums">package com.sample.practice3;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.dbunit.database.IDatabaseConnection;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.base.UnitTestBase;
+import com.cms.entity.invoice.CmsInvoiceBean;
+import com.cms.service.practice3.CalculateInvoiceService;
+
+
+@SuppressWarnings(&quot;rawtypes&quot;)
+@RunWith(SpringRunner.class)
+@SpringBootTest
+<span class="nc" id="L26">public class CalculateInvoiceServiceTest {</span>
+
+	private static IDatabaseConnection conn;
+
+	private final static String path = &quot;src\\test\\data\\practice3\\&quot;;
+	/* テストデータを登録する */
+	@BeforeAll
+	public static void init() throws Exception {
+<span class="nc" id="L34">		conn = UnitTestBase.connect();</span>
+<span class="nc" id="L35">    	UnitTestBase.clearData(path,conn);</span>
+		// CSVデータを取り込む
+<span class="nc" id="L37">		UnitTestBase.initData(path,conn);</span>
+<span class="nc" id="L38">	}</span>
+
+	@AfterAll
+	public static void closeConnection() throws Exception {
+		// 計算後のデータが正常に登録されるかを確認するため、クリアされない
+		// CSVデータを取り込む
+<span class="nc" id="L44">		UnitTestBase.closeConnection(conn);</span>
+<span class="nc" id="L45">	}</span>
+
+	@Autowired
+	CalculateInvoiceService service;
+
+	/**
+	 * ケース①：社員IDが設定されない場合
+	 */
+	@Test
+	public void testNg01() {
+		try {
+<span class="nc" id="L56">			List&lt;CmsInvoiceBean&gt; retList = service.calculateWorkHourAndSalary(&quot;&quot;, &quot;202203&quot;);</span>
+
+<span class="nc" id="L58">		} catch (Exception e) {</span>
+			// 異常メッセージ比較
+<span class="nc" id="L60">			assertEquals(&quot;社員IDをご設定ください&quot;, e.getMessage());</span>
+		}
+<span class="nc" id="L62">	}</span>
+
+	/**
+	 * ケース②：社員IDが社員マスタに存在しない場合
+	 */
+	@Test
+	public void testNg02() {
+		try {
+<span class="nc" id="L70">			List&lt;CmsInvoiceBean&gt; retList = service.calculateWorkHourAndSalary(&quot;EM909&quot;, &quot;202203&quot;);</span>
+
+<span class="nc" id="L72">		} catch (Exception e) {</span>
+<span class="nc" id="L73">			assertEquals(&quot;社員はありません。&quot;, e.getMessage());</span>
+		}
+<span class="nc" id="L75">	}</span>
+
+	/**
+	 * ケース③：異常（社員IDと勤務年月のデータが存在しない場合）
+	 */
+	@Test
+	public void testNg03() {
+		try {
+<span class="nc" id="L83">			List&lt;CmsInvoiceBean&gt; retList = service.calculateWorkHourAndSalary(&quot;1&quot;, &quot;202401&quot;);</span>
+
+<span class="nc" id="L85">		} catch (Exception e) {</span>
+<span class="nc" id="L86">			assertEquals(&quot;該当社員の勤怠情報はありません。&quot;, e.getMessage());</span>
+		}
+<span class="nc" id="L88">	}</span>
+
+	/**
+	 * ケース④：異常（同様な社員IDと勤務年月のデータを2回実施する場合）
+	 */
+	@Test
+	public void testNg04() {
+		try {
+<span class="nc" id="L96">			List&lt;CmsInvoiceBean&gt; retList1 = service.calculateWorkHourAndSalary(&quot;1&quot;, &quot;202201&quot;);</span>
+<span class="nc" id="L97">			List&lt;CmsInvoiceBean&gt; retList2 = service.calculateWorkHourAndSalary(&quot;1&quot;, &quot;202201&quot;);</span>
+
+<span class="nc" id="L99">		} catch (Exception e) {</span>
+<span class="nc" id="L100">			assertEquals(&quot;指定条件の請求書がすでに登録されました。&quot;, e.getMessage());</span>
+		}
+<span class="nc" id="L102">	}</span>
+
+	/**
+	 * ケース⑥：データ組み合わせシート：パターン①
+	 */
+	@Test
+	public void testNormal01() {
+		try {
+<span class="nc" id="L110">			List&lt;CmsInvoiceBean&gt; retList = service.calculateWorkHourAndSalary(&quot;1&quot;, &quot;202201&quot;);</span>
+
+			// 予想値の構築
+<span class="nc" id="L113">			List&lt;CmsInvoiceBean&gt; expectedList = new ArrayList&lt;CmsInvoiceBean&gt;();</span>
+<span class="nc" id="L114">			expectedList.add(createInvoiceBean(&quot;1&quot;, &quot;202201&quot;, 9, 9, new BigDecimal(90000.0), new BigDecimal(0)));</span>
+
+			// 件数比較
+<span class="nc" id="L117">			assertEquals(retList.size(), expectedList.size());</span>
+			// レコード比較
+<span class="nc" id="L119">			compareListBean(retList, expectedList);</span>
+<span class="nc" id="L120">		} catch (Exception e) {</span>
+<span class="nc" id="L121">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L123">	}</span>
+
+	/**
+	 * ケース⑦：データ組み合わせシート：パターン①
+	 */
+	@Test
+	public void testNormal02() {
+		try {
+<span class="nc" id="L131">			List&lt;CmsInvoiceBean&gt; retList = service.calculateWorkHourAndSalary(&quot;2&quot;, &quot;202202&quot;);</span>
+
+			// 予想値の構築
+<span class="nc" id="L134">			List&lt;CmsInvoiceBean&gt; expectedList = new ArrayList&lt;CmsInvoiceBean&gt;();</span>
+<span class="nc" id="L135">			expectedList.add(createInvoiceBean(&quot;2&quot;, &quot;202202&quot;, 26, 27, new BigDecimal(260000.0), new BigDecimal(10000)));</span>
+
+			// 件数比較
+<span class="nc" id="L138">			assertEquals(retList.size(), expectedList.size());</span>
+
+			// レコード比較
+<span class="nc" id="L141">			compareListBean(retList, expectedList);</span>
+<span class="nc" id="L142">		} catch (Exception e) {</span>
+<span class="nc" id="L143">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L145">	}</span>
+
+	/**
+	 * ケース⑧：データ組み合わせシート：パターン①
+	 */
+	@Test
+	public void testNormal03() {
+		try {
+<span class="nc" id="L153">			List&lt;CmsInvoiceBean&gt; retList = service.calculateWorkHourAndSalary(&quot;3&quot;, &quot;&quot;);</span>
+
+			// 予想値の構築
+<span class="nc" id="L156">			List&lt;CmsInvoiceBean&gt; expectedList = new ArrayList&lt;CmsInvoiceBean&gt;();</span>
+<span class="nc" id="L157">			expectedList</span>
+<span class="nc" id="L158">					.add(createInvoiceBean(&quot;3&quot;, &quot;202203&quot;, 8, 9, new BigDecimal(80000.0), new BigDecimal(10000)));</span>
+<span class="nc" id="L159">			expectedList</span>
+<span class="nc" id="L160">					.add(createInvoiceBean(&quot;3&quot;, &quot;202204&quot;, 8, 9, new BigDecimal(80000.0), new BigDecimal(10000)));</span>
+
+			// 件数比較
+<span class="nc" id="L163">			assertEquals(retList.size(), expectedList.size());</span>
+
+			// レコード比較
+<span class="nc" id="L166">			compareListBean(retList, expectedList);</span>
+<span class="nc" id="L167">		} catch (Exception e) {</span>
+<span class="nc" id="L168">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L170">	}</span>
+
+	/**
+	 * ケース⑨：データ組み合わせシート：パターン①
+	 */
+	@Test
+	public void testNormal04() {
+		try {
+<span class="nc" id="L178">			List&lt;CmsInvoiceBean&gt; retList = service.calculateWorkHourAndSalary(&quot;4&quot;, &quot;&quot;);</span>
+
+			// 予想値の構築
+<span class="nc" id="L181">			List&lt;CmsInvoiceBean&gt; expectedList = new ArrayList&lt;CmsInvoiceBean&gt;();</span>
+<span class="nc" id="L182">			expectedList.add(</span>
+<span class="nc" id="L183">					createInvoiceBean(&quot;4&quot;, &quot;202205&quot;, 28, 27, new BigDecimal(280000.0), new BigDecimal(-10000)));</span>
+<span class="nc" id="L184">			expectedList.add(</span>
+<span class="nc" id="L185">					createInvoiceBean(&quot;4&quot;, &quot;202206&quot;, 28, 27, new BigDecimal(280000.0), new BigDecimal(-10000)));</span>
+
+			// 件数比較
+<span class="nc" id="L188">			assertEquals(retList.size(), expectedList.size());</span>
+
+			// レコード比較
+<span class="nc" id="L191">			compareListBean(retList, expectedList);</span>
+<span class="nc" id="L192">		} catch (Exception e) {</span>
+<span class="nc" id="L193">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L195">	}</span>
+
+	/**
+	 * 請求書レコードを新規する
+	 * 
+	 * @param employeeId
+	 * @param month
+	 * @param standardBusinessHours
+	 * @param realWorkHous
+	 * @param salary
+	 * @param disabledGeneration
+	 */
+	private CmsInvoiceBean createInvoiceBean(String employeeId, String month, Integer standardBusinessHours,
+			Integer realWorkHous, BigDecimal salary, BigDecimal disabledGeneration) {
+<span class="nc" id="L209">		CmsInvoiceBean bean = new CmsInvoiceBean();</span>
+<span class="nc" id="L210">		bean.setEmployeeId(employeeId);</span>
+<span class="nc" id="L211">		bean.setWorkMonth(month);</span>
+<span class="nc" id="L212">		bean.setStandardBusinessHours(standardBusinessHours);</span>
+<span class="nc" id="L213">		bean.setRealWorkHous(realWorkHous);</span>
+<span class="nc" id="L214">		bean.setSalary(salary);</span>
+<span class="nc" id="L215">		bean.setDisabledGeneration(disabledGeneration);</span>
+<span class="nc" id="L216">		return bean;</span>
+	}
+
+	/**
+	 * 登録済の請求書レコードと予想値を比較する
+	 * 
+	 * @param recs         登録済請求書
+	 * @param expectedList 予想値
+	 */
+	private void compareListBean(List&lt;CmsInvoiceBean&gt; recs, List&lt;CmsInvoiceBean&gt; expectedList) {
+
+<span class="nc" id="L227">		int index = 0;</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">		for (CmsInvoiceBean rec : recs) {</span>
+<span class="nc" id="L229">			CmsInvoiceBean expectedBean = expectedList.get(index);</span>
+<span class="nc" id="L230">			assertEquals(rec.getEmployeeId(), expectedBean.getEmployeeId());</span>
+<span class="nc" id="L231">			assertEquals(rec.getWorkMonth(), expectedBean.getWorkMonth());</span>
+<span class="nc" id="L232">			assertEquals(rec.getStandardBusinessHours(), expectedBean.getStandardBusinessHours());</span>
+<span class="nc" id="L233">			assertEquals(rec.getRealWorkHous(), expectedBean.getRealWorkHous());</span>
+<span class="nc" id="L234">			assertEquals(rec.getSalary().toBigInteger(), expectedBean.getSalary().toBigInteger());</span>
+<span class="nc" id="L235">			assertEquals(rec.getDisabledGeneration().toBigInteger(),</span>
+<span class="nc" id="L236">					expectedBean.getDisabledGeneration().toBigInteger());</span>
+<span class="nc" id="L237">			index++;</span>
+		}
+
+<span class="nc" id="L240">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

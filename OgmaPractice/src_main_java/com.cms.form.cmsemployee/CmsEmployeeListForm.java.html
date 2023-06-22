@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CmsEmployeeListForm.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.form.cmsemployee</a> &gt; <span class="el_source">CmsEmployeeListForm.java</span></div><h1>CmsEmployeeListForm.java</h1><pre class="source lang-java linenums">package com.cms.form.cmsemployee;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.constraints.NotEmpty;
+
+import com.cms.entity.employee.CmsEmployeeBean;
+import com.cms.form.BaseForm;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * ユーザー情報 検索用リクエストデータ
+ */
+<span class="nc" id="L17">@Getter</span>
+<span class="nc" id="L18">@Setter</span>
+<span class="nc" id="L19">public class CmsEmployeeListForm extends BaseForm {</span>
+
+	/* 検索結果 */
+	private List&lt;CmsEmployeeBean&gt; results;
+
+	private String employeeId;
+
+	@NotEmpty
+	private String name;
+	
+	private String type;
+	
+	//生年月
+	private String month;
+
+	//職種選択リスト
+	@NotEmpty
+	private String selectedJobType;
+	private Map&lt;String, String&gt; jobTypeList;
+
+	//性別選択リスト
+	@NotEmpty
+	private String selectedSexy;
+	private Map&lt;String, String&gt; sexyList;
+
+	//社員区分
+	private Map&lt;String, String&gt; employeeKbnMap;
+	private String selectedEmployeeKbn;
+	
+	//全選択の削除対象
+	private String selectedItemIds;
+	
+	//選択対象(ID+最終更新日)
+	private String selectedItemId;
+	
+	//ボタンフラグ（削除、編集ボタン：True；参照：False）
+	private boolean btnFlg;
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

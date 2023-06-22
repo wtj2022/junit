@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>SalaryServiceImpl.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.service.salary</a> &gt; <span class="el_source">SalaryServiceImpl.java</span></div><h1>SalaryServiceImpl.java</h1><pre class="source lang-java linenums">package com.cms.service.salary;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cms.entity.employee.CmsEmployeeBean;
+import com.cms.entity.salary.CmsSalaryDetailBean;
+import com.cms.entity.salary.CmsSalaryDetailRegistBean;
+import com.cms.form.salary.CmsSalaryListForm;
+import com.cms.mapper.employee.CmsEmployeeMapper;
+import com.cms.mapper.salary.CmsSalaryMapper;
+import com.exception.BusinessException;
+/*
+ * ユーザー情報 Service
+ */
+@Service
+<span class="fc" id="L24">public class SalaryServiceImpl implements SalaryService {</span>
+
+	@Autowired
+	CmsSalaryMapper salaryMapper;
+
+	@Autowired
+	CmsEmployeeMapper employeeMapper;
+
+	/** 給料明細リスト */
+	private List&lt;CmsSalaryDetailBean&gt; results;
+
+	/** 給料明細登録リスト */
+	private List&lt;CmsSalaryDetailRegistBean&gt; employeeHaveNotSalary;
+
+	private String nm;
+	
+	private String month;
+	/**
+	 * ユーザー情報検索 
+	 * 
+	 * @param userSearchRequest リクエストデータ
+	 * @return 検索結果
+	 */
+	public CmsSalaryListForm select(CmsSalaryListForm form) {
+
+		//画面変数初期化
+<span class="nc" id="L50">		init(form);</span>
+		
+		//給料明細の検索
+<span class="nc" id="L53">		checkEmployeeExist(nm);</span>
+		
+		//給料明細の検索
+<span class="nc" id="L56">		getSalaryInfo(nm, month);</span>
+
+<span class="nc" id="L58">		form.setResults(results);</span>
+
+<span class="nc" id="L60">		return form;</span>
+	}
+	
+	/**
+	 * 給料明細情報を計算する
+	 * 
+	 * @param form フォーム
+	 * @return 検索結果
+	 */
+	@Override
+	public CmsSalaryListForm createSalary(CmsSalaryListForm form) {
+
+		//画面変数初期化
+<span class="nc" id="L73">		init(form);</span>
+		
+		//■必須チェック
+<span class="nc bnc" id="L76" title="All 2 branches missed.">		if (StringUtils.isEmpty(month)) {</span>
+<span class="nc" id="L77">			throw new BusinessException(&quot;給料計算ボタンを押すため、給料年月をご指定ください。&quot;);</span>
+		}
+
+		//社員存在チェック
+<span class="nc" id="L81">		checkEmployeeExist(nm);</span>
+		
+		//給料明細の検索
+<span class="nc" id="L84">		createEmployeeWhoHaveNotSalary(nm, month);</span>
+		
+		//再検索実施
+<span class="nc" id="L87">		List&lt;CmsSalaryDetailBean&gt; results = researchSalaryDetail(nm, month);</span>
+<span class="nc" id="L88">		form.setResults(results);</span>
+		
+<span class="nc" id="L90">		return form;</span>
+	}
+
+	/**
+	 * 給料明細情報を削除する
+	 * 
+	 * @param form フォーム
+	 * @return 検索結果
+	 */
+	@Override
+	public CmsSalaryListForm deleteSalary(CmsSalaryListForm form) {
+		//画面変数初期化
+<span class="nc" id="L102">		init(form);</span>
+		
+		//削除給料情報を取得する
+<span class="nc" id="L105">		String[] ids = form.getItemIds().split(&quot;,&quot;);</span>
+
+		//一括削除実施
+<span class="nc" id="L108">		salaryMapper.deleteRecords(ids);</span>
+		
+        //再検索
+<span class="nc" id="L111">		List&lt;CmsSalaryDetailBean&gt; results = researchSalaryDetail(nm, month);</span>
+<span class="nc" id="L112">		form.setResults(results);</span>
+<span class="nc" id="L113">		return form;</span>
+	}
+
+	/**
+	 * 社員情報を検索する
+	 * 
+	 * @param nm 社員名
+	 */
+	private void checkEmployeeExist(String nm) {
+		//■社員情報存在チェック
+<span class="nc" id="L123">		CmsEmployeeBean employeeBean = new CmsEmployeeBean();</span>
+<span class="nc" id="L124">		employeeBean.setName(nm);</span>
+		
+<span class="nc" id="L126">		Integer recordCount = employeeMapper.selectRecordCount(employeeBean);</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">		if (recordCount == 0) {</span>
+<span class="nc" id="L128">			throw new BusinessException(&quot;社員は存在しません。&quot;);</span>
+		}
+<span class="nc" id="L130">	}</span>
+
+	/**
+	 * 給料明細情報を検索する
+	 * 
+	 * @param nm 社員名
+	 * @param month 給料年月
+	 */
+	private void getSalaryInfo(String nm , String month) {
+<span class="nc" id="L139">		CmsSalaryDetailBean salaryBean = new CmsSalaryDetailBean();</span>
+
+<span class="nc" id="L141">		salaryBean.setEmployeeNm(nm);</span>
+<span class="nc" id="L142">		salaryBean.setSalaryMonth(month);</span>
+		
+<span class="nc" id="L144">		results = salaryMapper.select(salaryBean);</span>
+		//検索ボタンを押下後
+<span class="nc bnc" id="L146" title="All 4 branches missed.">		if (results != null &amp;&amp; results.size() == 0) {</span>
+<span class="nc" id="L147">			throw new BusinessException(&quot;給料明細データはまだ作成されません。ボタン【給料計算】でご作成ください。&quot;);</span>
+		}
+<span class="nc" id="L149">	}</span>
+	
+	/**
+	 * 社員情報取得（※給料未作成の社員）
+	 * 
+	 * @param nm 社員名
+	 * @param month 給料年月
+	 */
+	private void createEmployeeWhoHaveNotSalary(String nm, String month) {
+		
+<span class="nc" id="L159">		CmsSalaryDetailBean bean = new CmsSalaryDetailBean();</span>
+<span class="nc" id="L160">		bean.setSalaryMonth(month);</span>
+<span class="nc" id="L161">		List&lt;CmsSalaryDetailBean&gt; insRecords = new ArrayList&lt;CmsSalaryDetailBean&gt;();</span>
+<span class="nc" id="L162">		CmsSalaryDetailBean record = null;</span>
+		
+<span class="nc" id="L164">		employeeHaveNotSalary = salaryMapper.selectEmployeeForSalaryIsNotCreated(bean);</span>
+
+<span class="nc" id="L166">		Date today = Calendar.getInstance().getTime();</span>
+<span class="nc" id="L167">	    System.out.println(&quot;---------start-----------&quot;);</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">		for (CmsSalaryDetailRegistBean emp : employeeHaveNotSalary) {</span>
+<span class="nc" id="L169">			record = new CmsSalaryDetailBean();</span>
+			//社員ID
+<span class="nc" id="L171">			record.setEmployeeId(emp.getEmployeeId());</span>
+			
+			//給料年月
+<span class="nc" id="L174">			record.setSalaryMonth(emp.getMonth());</span>
+			
+			//給料
+<span class="nc" id="L177">			record.setSalary(emp.getSalary());</span>
+
+			//勤務時間
+			//勤務時間
+<span class="nc bnc" id="L181" title="All 2 branches missed.">			BigDecimal hours = (emp.getHours() == null)? new BigDecimal(0):emp.getHours();</span>
+<span class="nc" id="L182">			record.setWorkhours(hours);</span>
+			
+			//■残業控除を計算する
+			//勤務時間上限
+<span class="nc" id="L186">			BigDecimal topWorkHour = emp.getTopWorkHour();</span>
+			//基本給料（税込）
+<span class="nc" id="L188">			BigDecimal salary = emp.getSalary();</span>
+<span class="nc" id="L189">			BigDecimal disabledGeneration = new BigDecimal(0);</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">			if (hours != null) {</span>
+				//残業と控除を計算する
+<span class="nc" id="L192">				disabledGeneration = salary.divide(topWorkHour, 0, BigDecimal.ROUND_HALF_UP)</span>
+<span class="nc" id="L193">						                   .multiply(hours.subtract(topWorkHour));</span>
+<span class="nc" id="L194">				record.setDisabledGeneration(disabledGeneration);			</span>
+			}
+<span class="nc" id="L196">			record.setDisabledGeneration(disabledGeneration);</span>
+
+			//■費用
+			//費用合計
+<span class="nc bnc" id="L200" title="All 2 branches missed.">			BigDecimal cost =(emp.getCostAmount() == null)? new BigDecimal(0):emp.getCostAmount();</span>
+<span class="nc" id="L201">			record.setCost(cost);</span>
+			
+			//実給(税込)
+<span class="nc" id="L204">			BigDecimal actualSalary = salary.add(cost).add(disabledGeneration);</span>
+<span class="nc" id="L205">			record.setActualSalary(actualSalary);</span>
+			
+			//登録日付
+<span class="nc" id="L208">			record.setRegistDay(today);</span>
+
+			//更新日付
+<span class="nc" id="L211">			record.setUpdateDay(today);</span>
+			
+<span class="nc" id="L213">			insRecords.add(record);</span>
+		}
+		
+		//一括登録
+<span class="nc" id="L217">		salaryMapper.insertBulk(insRecords);</span>
+<span class="nc" id="L218">	    System.out.println(&quot;---------end-----------&quot;);</span>
+<span class="nc" id="L219">	}</span>
+	
+	/**
+	 * 再検索を実施する
+	 * 
+	 * @param nm 社員名
+	 * @param month 給料年月
+	 * @return 検索結果
+	 */
+	private List&lt;CmsSalaryDetailBean&gt; researchSalaryDetail(String nm, String month) {
+		//再検索条件設定
+<span class="nc" id="L230">		CmsSalaryDetailBean bean = new CmsSalaryDetailBean();</span>
+<span class="nc" id="L231">		bean.setEmployeeNm(nm);</span>
+<span class="nc" id="L232">		bean.setSalaryMonth(month);</span>
+		
+<span class="nc" id="L234">		return salaryMapper.select(bean);</span>
+	}
+	
+	/**
+	 * 変数の初期化
+	 * 
+	 * @param form フォーム
+	 */
+	private void init(CmsSalaryListForm form) {
+		
+		//社員名
+<span class="nc bnc" id="L245" title="All 2 branches missed.">		nm = (StringUtils.isEmpty(form.getName())?null:form.getName());</span>
+		//給料年月
+<span class="nc bnc" id="L247" title="All 2 branches missed.">		month = (StringUtils.isEmpty(form.getMonth())?null:form.getMonth().replace(&quot;-&quot;, &quot;&quot;));</span>
+		
+<span class="nc" id="L249">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

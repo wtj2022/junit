@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>SellCalculateController.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.controller.sellcalculate</a> &gt; <span class="el_source">SellCalculateController.java</span></div><h1>SellCalculateController.java</h1><pre class="source lang-java linenums">package com.cms.controller.sellcalculate;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.cms.controller.base.ControllerBase;
+import com.cms.entity.sellcalculate.SellDataBean;
+import com.cms.form.sellcalculate.SellCalculateForm;
+import com.cms.service.sellcalculate.SellCalculateService;
+import com.exception.BusinessException;
+
+/**
+ * 請求書計算Controller
+ */
+@Controller
+@RequestMapping(value = &quot;/sellcalculate/sellcalculate&quot;)
+<span class="fc" id="L26">public class SellCalculateController extends ControllerBase {</span>
+
+	@Autowired
+	SellCalculateService service;
+	
+	private final static String URL = &quot;/sellcalculate/sellcalculate&quot;;
+
+	/**
+	 * 請求書計算画面の初期化
+	 * 
+	 * @param model モデル（データ保存）
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public String init(Model model) {
+
+<span class="nc" id="L41">		model.addAttribute(&quot;form&quot;, new SellCalculateForm());</span>
+
+<span class="nc" id="L43">		return URL;</span>
+	}
+
+	/**
+	 * 請求書計算
+	 * 
+	 * @param form 請求書計算画面のフォーム
+	 * @param result Validatorのエラー登録
+	 * @param model モデル（データ保存）
+	 */
+	@RequestMapping(params = &quot;calculate&quot;, method = RequestMethod.POST)
+	public String calculate(@ModelAttribute(&quot;form&quot;)@Valid SellCalculateForm form,BindingResult result,  Model model) {
+		
+		try {
+<span class="nc bnc" id="L57" title="All 2 branches missed.">			if (result.hasErrors()) {</span>
+				//フォームチェックエラーがある場合
+<span class="nc" id="L59">				model.addAttribute(&quot;form&quot;, form);</span>
+<span class="nc" id="L60">				return null;</span>
+			}
+			
+			// 請求書計算サービスを呼び出す
+<span class="nc" id="L64">			List&lt;SellDataBean&gt; ret = service.calculateSellData(form.getStoreId() ,form.getSellMonth());</span>
+
+			//計算結果をフォームに保存する
+<span class="nc" id="L67">			form.setResults(ret);</span>
+
+<span class="nc" id="L69">		} catch (BusinessException e) {</span>
+			
+			//エラーメッセージを設定する
+<span class="nc" id="L72">			form.setErrorMessage(e.getMessage());</span>
+<span class="nc" id="L73">			System.out.println(e.getErrDetail());</span>
+		    
+<span class="nc" id="L75">		} catch (Exception e) {</span>
+			
+			//エラーメッセージを設定する
+<span class="nc" id="L78">			form.setErrorMessage(e.getMessage());</span>
+<span class="nc" id="L79">			System.out.println(e);</span>
+			
+		}
+		//フォームをモデルに保存し、画面に返却する
+<span class="nc" id="L83">		model.addAttribute(&quot;form&quot;, form);</span>
+		
+<span class="nc" id="L85">		return URL;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

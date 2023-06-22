@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>UnitTestBase.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">com.base</a> &gt; <span class="el_source">UnitTestBase.java</span></div><h1>UnitTestBase.java</h1><pre class="source lang-java linenums">package com.base;
+
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.csv.CsvDataSet;
+import org.dbunit.operation.DatabaseOperation;
+
+<span class="nc" id="L17">public class UnitTestBase {</span>
+	/**
+	 * コネクションを接続し、テストデータを取込む
+	 **/
+	public static IDatabaseConnection connect() throws Exception {
+	    // ①DBコネクション取得
+<span class="fc" id="L23">	    Connection conn = DriverManager.getConnection(&quot;jdbc:mysql://localhost/mysql_pg&quot;, &quot;root&quot;, &quot;123456&quot;);</span>
+<span class="fc" id="L24">	    IDatabaseConnection dbconn = new DatabaseConnection(conn);</span>
+	    
+<span class="fc" id="L26">	    return dbconn;</span>
+	}
+	
+	/**
+	 * コネクションを接続し、テストデータを取込む
+	 **/
+	public static void initData(String path, IDatabaseConnection dbconn) throws Exception {
+
+	    // ②CSV用データセット作成
+<span class="fc" id="L35">	    IDataSet dataset = new CsvDataSet(new File(path));</span>
+<span class="fc" id="L36">	    DatabaseOperation.DELETE_ALL.execute(dbconn, dataset);</span>
+	    // ④データの挿入
+<span class="fc" id="L38">	    DatabaseOperation.INSERT.execute(dbconn, dataset);</span>
+	    
+<span class="fc" id="L40">	}</span>
+	/**
+	 * コネクションを接続し、テストデータを取込む
+	 **/
+	public static void clearData(String path, IDatabaseConnection dbconn) throws Exception {
+
+	    // ②CSV用データセット作成
+<span class="fc" id="L47">	    IDataSet dataset = new CsvDataSet(new File(path));</span>
+
+<span class="fc" id="L49">	    DatabaseOperation.DELETE_ALL.execute(dbconn, dataset);</span>
+<span class="fc" id="L50">	}</span>
+	/**
+	 * DB接続をクローズする
+	 **/
+	public static void closeConnection(IDatabaseConnection dbconn) throws Exception {
+<span class="fc" id="L55">		dbconn.close();</span>
+<span class="fc" id="L56">	}  </span>
+    //登録データを抽出する
+    public static ITable executeQuery(IDatabaseConnection dbconn, String tableNm ,String sql){
+
+        PreparedStatement ps;
+<span class="nc" id="L61">        ITable iTable = null;</span>
+		try {
+<span class="nc" id="L63">			ps = dbconn.getConnection().prepareStatement(sql);</span>
+<span class="nc" id="L64">			iTable = dbconn.createTable(tableNm, ps);</span>
+
+<span class="nc" id="L66">		} catch (SQLException e) {</span>
+<span class="nc" id="L67">			e.printStackTrace();</span>
+<span class="nc" id="L68">		} catch (DataSetException e) {</span>
+<span class="nc" id="L69">			e.printStackTrace();</span>
+		}
+<span class="nc" id="L71">		return iTable;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

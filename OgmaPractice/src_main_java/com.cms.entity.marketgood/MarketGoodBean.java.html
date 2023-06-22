@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>MarketGoodBean.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.entity.marketgood</a> &gt; <span class="el_source">MarketGoodBean.java</span></div><h1>MarketGoodBean.java</h1><pre class="source lang-java linenums">package com.cms.entity.marketgood;
+
+import java.math.BigDecimal;
+import java.sql.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.Data;
+
+<span class="nc bnc" id="L12" title="All 70 branches missed.">@Data</span>
+@Table(name = &quot;market_goods&quot;)
+public class MarketGoodBean {
+	@Id
+	@Column(name = &quot;goodId&quot;)
+	private String goodId;
+	
+	@Column(name = &quot;goodName&quot;)
+	private String goodName;
+	
+	@Column(name = &quot;type&quot;)
+	private String type;
+	
+	@Column(name = &quot;maker&quot;)
+	private String maker;
+	
+	@Column(name = &quot;purchasePrice&quot;)
+	private BigDecimal purchasePrice;
+	
+	@Column(name = &quot;salesPrice&quot;)
+	private BigDecimal salesPrice;
+
+	@Column(name = &quot;registDay&quot;)
+	private Date registDay;
+	
+	@Column(name = &quot;updateDay&quot;)
+	private Date updateDay;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

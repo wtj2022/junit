@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>ReadcsvServiceTest_Mock_Mapper.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">com.sample.practice1</a> &gt; <span class="el_source">ReadcsvServiceTest_Mock_Mapper.java</span></div><h1>ReadcsvServiceTest_Mock_Mapper.java</h1><pre class="source lang-java linenums">package com.sample.practice1;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.cms.entity.employee.CmsEmployeeBean;
+import com.cms.mapper.practice1.Practice1Mapper;
+
+@SuppressWarnings(&quot;rawtypes&quot;)
+@RunWith(SpringRunner.class)  
+@SpringBootTest
+<span class="nc" id="L21">public class ReadcsvServiceTest_Mock_Mapper </span>
+{
+
+	@Mock
+    private Practice1Mapper mapper;
+    
+    /**
+     * 正常終了
+     * 
+     * 検索件数：1件
+     */
+    @Test
+    public void test_readDataFromMysql_Normal_1() 
+    {
+      	//検索結果Mock
+<span class="nc" id="L36">    	List&lt;CmsEmployeeBean&gt; mockResults = new ArrayList&lt;CmsEmployeeBean&gt;();</span>
+<span class="nc" id="L37">    	mockResults.add(createBean(&quot;1&quot;));</span>
+    	
+    	//引数
+<span class="nc" id="L40">    	CmsEmployeeBean paramBean = new CmsEmployeeBean();</span>
+    	
+<span class="nc" id="L42">    	Mockito.when(this.mapper.select(paramBean)).thenReturn(mockResults);</span>
+    	
+<span class="nc" id="L44">    	CmsEmployeeBean bean = new CmsEmployeeBean();</span>
+<span class="nc" id="L45">    	List&lt;CmsEmployeeBean&gt; results = mapper.select(bean);</span>
+    	//件数
+<span class="nc" id="L47">    	assertEquals(1, results.size());</span>
+    	
+    	//検索結果確認
+<span class="nc" id="L50">    	assertEquals(&quot;1&quot;, results.get(0).getEmployeeId());</span>
+<span class="nc" id="L51">    	assertEquals(&quot;社員1&quot;, results.get(0).getName());</span>
+<span class="nc" id="L52">    }</span>
+    
+    
+    /**
+     * 正常終了
+     * 
+     * 検索件数：複数件
+     */
+    @Test
+    public void test_readDataFromMysql_Normal_2() 
+    {
+      	//検索結果Mock
+<span class="nc" id="L64">    	List&lt;CmsEmployeeBean&gt; mockResults = new ArrayList&lt;CmsEmployeeBean&gt;();</span>
+<span class="nc" id="L65">    	mockResults.add(createBean(&quot;1&quot;));</span>
+<span class="nc" id="L66">    	mockResults.add(createBean(&quot;2&quot;));</span>
+    	
+    	//引数
+<span class="nc" id="L69">    	CmsEmployeeBean paramBean = new CmsEmployeeBean();</span>
+    	
+<span class="nc" id="L71">    	Mockito.when(this.mapper.select(paramBean)).thenReturn(mockResults);</span>
+    	
+<span class="nc" id="L73">    	CmsEmployeeBean bean = new CmsEmployeeBean();</span>
+<span class="nc" id="L74">    	List&lt;CmsEmployeeBean&gt; results = mapper.select(bean);</span>
+    	//件数比較
+<span class="nc" id="L76">    	assertEquals(2, results.size());</span>
+    	//1件目の検索結果を比較する
+<span class="nc" id="L78">    	assertEquals(&quot;1&quot;, results.get(0).getEmployeeId());</span>
+<span class="nc" id="L79">    	assertEquals(&quot;社員1&quot;, results.get(0).getName());</span>
+
+    	//2件目の検索結果を比較する
+<span class="nc" id="L82">    	assertEquals(&quot;2&quot;, results.get(1).getEmployeeId());</span>
+<span class="nc" id="L83">    	assertEquals(&quot;社員2&quot;, results.get(1).getName());</span>
+<span class="nc" id="L84">    }</span>
+    
+    private CmsEmployeeBean createBean(String key) {
+<span class="nc" id="L87">    	CmsEmployeeBean mockBean = new CmsEmployeeBean();</span>
+<span class="nc" id="L88">    	mockBean.setEmployeeId(key);</span>
+<span class="nc" id="L89">    	mockBean.setName(&quot;社員&quot;+key);</span>
+    	
+<span class="nc" id="L91">    	return mockBean;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

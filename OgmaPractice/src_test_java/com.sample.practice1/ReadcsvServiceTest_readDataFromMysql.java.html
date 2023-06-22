@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>ReadcsvServiceTest_readDataFromMysql.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">com.sample.practice1</a> &gt; <span class="el_source">ReadcsvServiceTest_readDataFromMysql.java</span></div><h1>ReadcsvServiceTest_readDataFromMysql.java</h1><pre class="source lang-java linenums">package com.sample.practice1;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.dbunit.database.IDatabaseConnection;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.base.UnitTestBase;
+import com.cms.entity.employee.CmsEmployeeBean;
+import com.cms.form.practice1.ReadDataBaseForm;
+import com.cms.service.practice1.ReadDataBaseService;
+
+@SuppressWarnings(&quot;rawtypes&quot;)
+@RunWith(SpringRunner.class)
+@SpringBootTest
+<span class="nc" id="L26">public class ReadcsvServiceTest_readDataFromMysql {</span>
+
+	private static IDatabaseConnection conn;
+	private final static String path = &quot;src\\test\\data\\practice1\\&quot;;
+	
+	/* テストデータを登録する */
+	@BeforeAll
+	public static void init() throws Exception {
+<span class="nc" id="L34">		conn = UnitTestBase.connect();</span>
+
+		// 実施前にテーブルの既存データをクリアする
+<span class="nc" id="L37">		UnitTestBase.clearData(path, conn);</span>
+		// CSVデータを取り込む
+<span class="nc" id="L39">		UnitTestBase.initData(path, conn);</span>
+<span class="nc" id="L40">	}</span>
+
+	@AfterAll
+	public static void closeConnection() throws Exception {
+<span class="nc" id="L44">		UnitTestBase.clearData(path, conn);</span>
+		// CSVデータを取り込む
+<span class="nc" id="L46">		UnitTestBase.closeConnection(conn);</span>
+<span class="nc" id="L47">	}</span>
+
+	@Autowired
+	ReadDataBaseService service;
+
+	/**
+	 * ケース：No1
+	 * 　　　　異常系
+	 * 条件：
+	 *     　　社員ID：DBに存在しない
+	 *     　　社員名：DBに存在しない
+	 * 予想値：
+	 * 　　　　エラー：検索結果がありません。
+	 */
+	@Test
+	public void test_readDataFromMysql_01() {
+		try {
+<span class="nc" id="L64">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L65">			form.setEmployeeId(&quot;111&quot;);</span>
+<span class="nc" id="L66">			form.setEmployeeName(&quot;龍一&quot;);</span>
+<span class="nc" id="L67">			service.readDataFromMysql(form);</span>
+
+<span class="nc" id="L69">		} catch (Exception e) {</span>
+<span class="nc" id="L70">			String message = e.getMessage();</span>
+<span class="nc" id="L71">			assertEquals(&quot;検索結果がありません。&quot;, message);</span>
+		}
+
+<span class="nc" id="L74">	}</span>
+
+	/**
+	 * ケース：No2
+	 * 　　　　異常系
+	 * 条件：
+	 *     　　社員ID：DBに存在する
+	 *     　　社員名：DBに存在しない
+	 * 予想値：
+	 * 　　　　エラー：検索結果がありません。
+	 */
+	@Test
+	public void test_readDataFromMysql_02() {
+		try {
+<span class="nc" id="L88">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L89">			form.setEmployeeId(&quot;1&quot;);</span>
+<span class="nc" id="L90">			form.setEmployeeName(&quot;龍一&quot;);</span>
+<span class="nc" id="L91">			service.readDataFromMysql(form);</span>
+
+<span class="nc" id="L93">		} catch (Exception e) {</span>
+<span class="nc" id="L94">			String message = e.getMessage();</span>
+<span class="nc" id="L95">			assertEquals(&quot;検索結果がありません。&quot;, message);</span>
+		}
+<span class="nc" id="L97">	}</span>
+	/**
+	 * ケース：No3
+	 * 　　　　異常系
+	 * 条件：
+	 *     　　社員ID：DBに存在しない
+	 *     　　社員名：DBに存在する
+	 * 予想値：
+	 * 　　　　エラー：検索結果がありません。
+	 */
+	@Test
+	public void test_readDataFromMysql_03() {
+		try {
+<span class="nc" id="L110">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L111">			form.setEmployeeId(&quot;123321&quot;);</span>
+<span class="nc" id="L112">			form.setEmployeeName(&quot;王二&quot;);</span>
+<span class="nc" id="L113">			service.readDataFromMysql(form);</span>
+
+<span class="nc" id="L115">		} catch (Exception e) {</span>
+<span class="nc" id="L116">			String message = e.getMessage();</span>
+<span class="nc" id="L117">			assertEquals(&quot;検索結果がありません。&quot;, message);</span>
+		}
+<span class="nc" id="L119">	}</span>
+	
+	/**
+	 * ケース：No4
+	 * 　　　　異常系
+	 * 条件：
+	 *     　　社員ID：DBに存在しない
+	 *     　　社員名：未入力
+	 * 予想値：
+	 * 　　　　エラー：検索結果がありません。
+	 */
+	@Test
+	public void test_readDataFromMysql_04() {
+		try {
+<span class="nc" id="L133">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L134">			form.setEmployeeId(&quot;123321&quot;);</span>
+<span class="nc" id="L135">			service.readDataFromMysql(form);</span>
+
+<span class="nc" id="L137">		} catch (Exception e) {</span>
+<span class="nc" id="L138">			String message = e.getMessage();</span>
+<span class="nc" id="L139">			assertEquals(&quot;検索結果がありません。&quot;, message);</span>
+		}
+<span class="nc" id="L141">	}</span>
+	
+	/**
+	 * ケース：No5
+	 * 　　　　異常系
+	 * 条件：
+	 *     　　社員ID：未入力
+	 *     　　社員名：DBに存在しない（姓のみ）
+	 * 予想値：
+	 * 　　　　エラー：検索結果がありません。
+	 */
+	@Test
+	public void test_readDataFromMysql_05() {
+		try {
+<span class="nc" id="L155">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L156">			form.setEmployeeName(&quot;呉&quot;);</span>
+<span class="nc" id="L157">			service.readDataFromMysql(form);</span>
+
+<span class="nc" id="L159">		} catch (Exception e) {</span>
+<span class="nc" id="L160">			String message = e.getMessage();</span>
+<span class="nc" id="L161">			assertEquals(&quot;検索結果がありません。&quot;, message);</span>
+		}
+<span class="nc" id="L163">	}</span>
+	/**
+	 * ケース：No6
+	 * 　　　　異常系
+	 * 条件：
+	 *     　　社員ID：未入力
+	 *     　　社員名：DBに存在しない（名のみ）
+	 * 予想値：
+	 * 　　　　エラー：検索結果がありません。
+	 */
+	@Test
+	public void test_readDataFromMysql_06() {
+		try {
+<span class="nc" id="L176">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L177">			form.setEmployeeName(&quot;柳&quot;);</span>
+<span class="nc" id="L178">			service.readDataFromMysql(form);</span>
+
+<span class="nc" id="L180">		} catch (Exception e) {</span>
+<span class="nc" id="L181">			String message = e.getMessage();</span>
+<span class="nc" id="L182">			assertEquals(&quot;検索結果がありません。&quot;, message);</span>
+		}
+<span class="nc" id="L184">	}</span>
+	/**
+	 * ケース：No7
+	 * 　　　　正常系
+	 * 条件：
+	 *     　　社員ID：DBに存在する
+	 *     　　社員名：未入力
+	 * 予想値：
+	 * 　　　　エラー：明細データが抽出されること
+	 */
+	@Test
+	public void test_readDataFromMysql_07() {
+		try {
+<span class="nc" id="L197">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L198">			form.setEmployeeId(&quot;1&quot;);</span>
+<span class="nc" id="L199">			List&lt;CmsEmployeeBean&gt; results = service.readDataFromMysql(form);</span>
+
+<span class="nc" id="L201">			assertEquals(1, results.size());</span>
+			
+<span class="nc" id="L203">		} catch (Exception e) {</span>
+<span class="nc" id="L204">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L206">	}</span>
+	/**
+	 * ケース：No8
+	 * 　　　　正常系
+	 * 条件：
+	 *     　　社員ID：未入力
+	 *     　　社員名：DBに存在する（完全一致）
+	 * 予想値：
+	 * 　　　　エラー：明細データが抽出されること
+	 */
+	@Test
+	public void test_readDataFromMysql_08() {
+		try {
+<span class="nc" id="L219">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L220">			form.setEmployeeName(&quot;王六&quot;);</span>
+<span class="nc" id="L221">			List&lt;CmsEmployeeBean&gt; results = service.readDataFromMysql(form);</span>
+
+<span class="nc" id="L223">			assertEquals(1, results.size());</span>
+			
+<span class="nc" id="L225">		} catch (Exception e) {</span>
+<span class="nc" id="L226">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L228">	}</span>
+	/**
+	 * ケース：No9
+	 * 　　　　正常系
+	 * 条件：
+	 *     　　社員ID：未入力
+	 *     　　社員名：DBに存在する（姓のみ）
+	 * 予想値：
+	 * 　　　　エラー：明細データが抽出されること
+	 */
+	@Test
+	public void test_readDataFromMysql_09() {
+		try {
+<span class="nc" id="L241">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L242">			form.setEmployeeName(&quot;王&quot;);</span>
+<span class="nc" id="L243">			List&lt;CmsEmployeeBean&gt; results = service.readDataFromMysql(form);</span>
+
+<span class="nc" id="L245">			assertEquals(2, results.size());</span>
+			
+<span class="nc" id="L247">		} catch (Exception e) {</span>
+<span class="nc" id="L248">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L250">	}</span>
+	/**
+	 * ケース：No10
+	 * 　　　　正常系
+	 * 条件：
+	 *     　　社員ID：未入力
+	 *     　　社員名：DBに存在する（名のみ）
+	 * 予想値：
+	 * 　　　　エラー：明細データが抽出されること
+	 */
+	@Test
+	public void test_readDataFromMysql_10() {
+		try {
+<span class="nc" id="L263">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L264">			form.setEmployeeName(&quot;六&quot;);</span>
+<span class="nc" id="L265">			List&lt;CmsEmployeeBean&gt; results = service.readDataFromMysql(form);</span>
+
+<span class="nc" id="L267">			assertEquals(1, results.size());</span>
+			
+<span class="nc" id="L269">		} catch (Exception e) {</span>
+<span class="nc" id="L270">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L272">	}</span>
+	/**
+	 * ケース：No11
+	 * 　　　　正常系
+	 * 条件：
+	 *     　　社員ID：DBに存在する
+	 *     　　社員名：DBに存在する（姓のみ）
+	 * 予想値：
+	 * 　　　　エラー：明細データが抽出されること
+	 */
+	@Test
+	public void test_readDataFromMysql_11() {
+		try {
+<span class="nc" id="L285">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L286">			form.setEmployeeId(&quot;3&quot;);</span>
+<span class="nc" id="L287">			form.setEmployeeName(&quot;王&quot;);</span>
+<span class="nc" id="L288">			List&lt;CmsEmployeeBean&gt; results = service.readDataFromMysql(form);</span>
+
+<span class="nc" id="L290">			assertEquals(1, results.size());</span>
+<span class="nc" id="L291">		} catch (Exception e) {</span>
+<span class="nc" id="L292">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L294">	}</span>
+	/**
+	 * ケース：No12
+	 * 　　　　正常系
+	 * 条件：
+	 *     　　社員ID：DBに存在する
+	 *     　　社員名：DBに存在する（名のみ）
+	 * 予想値：
+	 * 　　　　エラー：明細データが抽出されること
+	 */
+	@Test
+	public void test_readDataFromMysql_12() {
+		try {
+<span class="nc" id="L307">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L308">			form.setEmployeeId(&quot;4&quot;);</span>
+<span class="nc" id="L309">			form.setEmployeeName(&quot;四&quot;);</span>
+<span class="nc" id="L310">			List&lt;CmsEmployeeBean&gt; results = service.readDataFromMysql(form);</span>
+
+<span class="nc" id="L312">			assertEquals(1, results.size());</span>
+			
+<span class="nc" id="L314">		} catch (Exception e) {</span>
+<span class="nc" id="L315">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L317">	}</span>
+	/**
+	 * ケース：No13
+	 * 　　　　正常系
+	 * 条件：
+	 *     　　社員ID：DBに存在する
+	 *     　　社員名：DBに存在する（完全一致）
+	 * 予想値：
+	 * 　　　　明細データが抽出されること
+	 */
+	@Test
+	public void test_readDataFromMysql_13() {
+		try {
+<span class="nc" id="L330">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L331">			form.setEmployeeId(&quot;5&quot;);</span>
+<span class="nc" id="L332">			form.setEmployeeName(&quot;柳五&quot;);</span>
+<span class="nc" id="L333">			List&lt;CmsEmployeeBean&gt; results = service.readDataFromMysql(form);</span>
+
+<span class="nc" id="L335">			assertEquals(1, results.size());</span>
+			
+<span class="nc" id="L337">		} catch (Exception e) {</span>
+<span class="nc" id="L338">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L340">	}</span>
+	/**
+	 * ケース：No14
+	 * 　　　　境界値
+	 * 条件：
+	 *     　　検索結果：1件のみ
+	 * 予想値：
+	 * 　　　　明細ヘッダとデータの揃えが設計書の通りに設定されること
+	 * 　　　　明細項目が設計書の通りにDBから抽出されること
+	 * 　　　　日付フォーマットが設計書通りに設定されること
+	 * 　　　　性別の名称が正常に表示されること
+	 */
+	@Test
+	public void test_readDataFromMysql_14() {
+		try {
+<span class="nc" id="L355">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L356">			form.setEmployeeId(&quot;5&quot;);</span>
+<span class="nc" id="L357">			form.setEmployeeName(&quot;五&quot;);</span>
+<span class="nc" id="L358">			List&lt;CmsEmployeeBean&gt; results = service.readDataFromMysql(form);</span>
+
+			//検査結果のサイズ
+<span class="nc" id="L361">			assertEquals(1, results.size());</span>
+<span class="nc bnc" id="L362" title="All 2 branches missed.">			for (CmsEmployeeBean bean : results) {</span>
+				//検索明細の比較
+<span class="nc" id="L364">				assertEquals(&quot;5&quot;, bean.getEmployeeId());</span>
+<span class="nc" id="L365">				assertEquals(&quot;柳五&quot;, bean.getName());</span>
+<span class="nc" id="L366">				assertEquals(&quot;女&quot;, bean.getSexForList());</span>
+<span class="nc" id="L367">				assertEquals(&quot;2005-05-09&quot;, bean.getBirthday());</span>
+<span class="nc" id="L368">				assertEquals(&quot;2014-04-01&quot;, bean.getJoiningDate());</span>
+			}
+			
+<span class="nc" id="L371">		} catch (Exception e) {</span>
+<span class="nc" id="L372">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L374">	}</span>
+	/**
+	 * ケース：No15
+	 * 　　　　境界値
+	 * 条件：
+	 *     　　検索結果：複数件
+	 * 予想値：
+	 * 　　　　明細ヘッダとデータの揃えが設計書の通りに設定されること
+	 * 　　　　明細項目が設計書の通りにDBから抽出されること
+	 * 　　　　日付フォーマットが設計書通りに設定されること
+	 * 　　　　性別の名称が正常に表示されること
+	 */
+	@Test
+	public void test_readDataFromMysql_15() {
+		try {
+<span class="nc" id="L389">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L390">			form.setEmployeeName(&quot;柳&quot;);</span>
+<span class="nc" id="L391">			List&lt;CmsEmployeeBean&gt; results = service.readDataFromMysql(form);</span>
+
+<span class="nc" id="L393">			List&lt;CmsEmployeeBean&gt; expectedValues = new ArrayList&lt;CmsEmployeeBean&gt;();</span>
+<span class="nc" id="L394">			CmsEmployeeBean bean1 = new CmsEmployeeBean();</span>
+<span class="nc" id="L395">			bean1.setEmployeeId(&quot;5&quot;);</span>
+<span class="nc" id="L396">			bean1.setName(&quot;柳五&quot;);</span>
+<span class="nc" id="L397">			bean1.setSexForList(&quot;女&quot;);</span>
+<span class="nc" id="L398">			bean1.setBirthday(&quot;2005-05-09&quot;);</span>
+<span class="nc" id="L399">			bean1.setJoiningDate(&quot;2014-04-01&quot;);</span>
+<span class="nc" id="L400">			bean1.setJoiningDate(&quot;2014-04-01&quot;);</span>
+			
+<span class="nc" id="L402">			CmsEmployeeBean bean2 = new CmsEmployeeBean();</span>
+<span class="nc" id="L403">			bean2.setEmployeeId(&quot;6&quot;);</span>
+<span class="nc" id="L404">			bean2.setName(&quot;柳六&quot;);</span>
+<span class="nc" id="L405">			bean2.setSexForList(&quot;男&quot;);</span>
+<span class="nc" id="L406">			bean2.setBirthday(&quot;2006-06-07&quot;);</span>
+<span class="nc" id="L407">			bean2.setJoiningDate(&quot;2015-04-01&quot;);</span>
+<span class="nc" id="L408">			expectedValues.add(bean1);</span>
+<span class="nc" id="L409">			expectedValues.add(bean2);</span>
+			
+			//検査結果のサイズ
+<span class="nc" id="L412">			assertArrayEquals(expectedValues.toArray(), results.toArray());</span>
+<span class="nc" id="L413">		} catch (Exception e) {</span>
+<span class="nc" id="L414">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L416">	}</span>
+	/**
+	 * ケース：No15
+	 * 　　　　境界値
+	 * 条件：
+	 *     　　検索結果：複数件
+	 * 予想値：
+	 * 　　　　明細ヘッダとデータの揃えが設計書の通りに設定されること
+	 * 　　　　明細項目が設計書の通りにDBから抽出されること
+	 * 　　　　日付フォーマットが設計書通りに設定されること
+	 * 　　　　性別の名称が正常に表示されること
+	 */
+	@Test
+	public void test_readDataFromMysql_17_18() {
+		try {
+<span class="nc" id="L431">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+			
+<span class="nc" id="L433">			List&lt;CmsEmployeeBean&gt; results = service.readDataFromMysql(form);</span>
+			//検索結果のIDリスト
+<span class="nc" id="L435">            Object[] ids = results.stream().map(CmsEmployeeBean::getEmployeeId).collect(Collectors.toList()).toArray();</span>
+		    
+            //予想値
+<span class="nc" id="L438">            Object[] expectedIds = {&quot;2&quot;,&quot;1&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;};</span>
+			
+			//検査結果のサイズ
+<span class="nc" id="L441">			assertArrayEquals(ids, expectedIds);</span>
+			
+<span class="nc" id="L443">		} catch (Exception e) {</span>
+<span class="nc" id="L444">			System.out.println(e.getMessage());</span>
+		}
+<span class="nc" id="L446">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

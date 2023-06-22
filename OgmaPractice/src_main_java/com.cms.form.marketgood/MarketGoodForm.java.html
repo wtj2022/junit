@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>MarketGoodForm.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.form.marketgood</a> &gt; <span class="el_source">MarketGoodForm.java</span></div><h1>MarketGoodForm.java</h1><pre class="source lang-java linenums">package com.cms.form.marketgood;
+
+import java.math.BigDecimal;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+
+import com.cms.form.BaseForm;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * 商品登録フォーム
+ */
+<span class="nc" id="L17">@Getter</span>
+<span class="nc" id="L18">@Setter</span>
+<span class="nc bnc" id="L19" title="All 54 branches missed.">@Data</span>
+public class MarketGoodForm extends BaseForm {
+
+	@NotEmpty
+	private String goodId;// 商品ID
+	@NotEmpty
+	private String goodName;// 商品名
+	@NotEmpty
+	private String type;// 商品種別
+	@NotEmpty
+	private String maker;// メーカー
+	@Min(1)
+	private BigDecimal purchasePrice;// 仕入単価
+	@Min(1)
+	private BigDecimal salesPrice;// 販売単価
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CmsWorkHourServiceImpl.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.service.workhour</a> &gt; <span class="el_source">CmsWorkHourServiceImpl.java</span></div><h1>CmsWorkHourServiceImpl.java</h1><pre class="source lang-java linenums">package com.cms.service.workhour;
+
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+import javax.transaction.SystemException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import com.cms.common.Constant;
+import com.cms.entity.cmsworkhour.CmsWorkHourBean;
+import com.cms.form.cmsworkhour.CmsWorkHourForm;
+import com.cms.mapper.common.CommonMapper;
+import com.cms.mapper.workhour.CmsWorkHourMapper;
+import com.utils.CmsUtils;
+import com.utils.ServiceUtils;
+/*
+ * ユーザー情報 Service
+ */
+@Service
+<span class="fc" id="L23">public class CmsWorkHourServiceImpl implements CmsWorkHourService {</span>
+
+	/****** Mapper ******/
+	@Autowired
+	CmsWorkHourMapper mapper;
+
+	@Autowired
+	CommonMapper commonMapper;
+
+	@Autowired
+	HttpSession session;
+
+	@Autowired
+	ServiceUtils serviceUtils;
+	/**
+	 * ユーザー情報検索 @param userSearchRequest リクエストデータ
+	 * 
+	 * @return 検索結果
+	 */
+	public CmsWorkHourForm selectLoginInfo(CmsWorkHourForm form) {
+
+		// ログイン情報を検索する
+<span class="nc" id="L45">		CmsWorkHourBean paramBean = new CmsWorkHourBean();</span>
+//		paramBean.setLoginId(form.getLoginId());
+
+<span class="nc" id="L48">		List&lt;CmsWorkHourBean&gt; searchResults = mapper.select(paramBean);</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">		if (!CollectionUtils.isEmpty(searchResults)) {</span>
+<span class="nc" id="L50">			CmsWorkHourBean result = searchResults.get(0);</span>
+
+//			form.setCompanyId(result.getCompanyId());
+<span class="nc" id="L53">			form.setEmployeeId(result.getEmployeeId());</span>
+<span class="nc" id="L54">			form.setResults(searchResults);</span>
+		}
+
+<span class="nc" id="L57">		return form;</span>
+	}
+
+	/**
+	 * ユーザー情報検索 @param userSearchRequest リクエストデータ
+	 * 
+	 * @return 検索結果
+	 */
+	public CmsWorkHourForm select(CmsWorkHourForm form) {
+		// ログイン情報を検索する
+<span class="nc" id="L67">		CmsWorkHourBean bean = new CmsWorkHourBean();</span>
+<span class="nc" id="L68">		form.setResults(mapper.selectList(bean));</span>
+
+<span class="nc" id="L70">		return form;</span>
+	}
+
+	/**
+	 * ユーザー情報検索 @param userSearchRequest リクエストデータ
+	 * 
+	 * @return 検索結果
+	 */
+	public CmsWorkHourForm insertInit(CmsWorkHourForm form) {
+		try {
+
+			// フォーム初期化
+<span class="nc" id="L82">			form = initForm();</span>
+			
+<span class="nc" id="L84">		} catch (SystemException se) {</span>
+<span class="nc" id="L85">			System.out.println(se.getMessage());</span>
+		}
+
+<span class="nc" id="L88">		return form;</span>
+	}
+
+	/**
+	 * ユーザー情報検索 @param userSearchRequest リクエストデータ
+	 * 
+	 * @return 検索結果
+	 */
+	public CmsWorkHourForm editInit(CmsWorkHourForm form) {
+<span class="nc" id="L97">		CmsWorkHourForm editForm = null;</span>
+		try {		
+			// フォーム初期化
+<span class="nc" id="L100">			editForm = initForm();</span>
+	
+			// ログイン情報を検索する
+<span class="nc" id="L103">			CmsWorkHourBean sqlBean = new CmsWorkHourBean();</span>
+<span class="nc" id="L104">			sqlBean.setEmployeeId(form.getEmployeeId());</span>
+	
+<span class="nc" id="L106">			List&lt;CmsWorkHourBean&gt; searchResults = mapper.select(sqlBean);</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">			if (!CollectionUtils.isEmpty(searchResults)) {</span>
+<span class="nc" id="L108">				CmsWorkHourBean result = searchResults.get(0);</span>
+	
+<span class="nc" id="L110">				editForm.setEmployeeId(result.getEmployeeId()); // 社員ID</span>
+	
+			}
+<span class="nc" id="L113">		} catch (SystemException se) {</span>
+<span class="nc" id="L114">			System.out.println(se.getMessage());</span>
+		}
+		
+<span class="nc" id="L117">		return editForm;</span>
+	}
+
+	/**
+	 * ユーザー情報検索
+	 * 
+	 * @param form フォーム
+	 * @return 検索結果
+	 */
+	public CmsWorkHourForm insert(CmsWorkHourForm form) {
+
+		// ログイン情報を検索する
+<span class="nc" id="L129">		CmsWorkHourBean bean = new CmsWorkHourBean();</span>
+
+<span class="nc" id="L131">		List&lt;CmsWorkHourBean&gt; employeeList = mapper.select(bean);</span>
+		// 8桁不足の場合、前に０を埋める
+<span class="nc" id="L133">		String id = String.format(Constant.FORMAT_EMPLOYEEID, employeeList.size() + 1);</span>
+<span class="nc" id="L134">		bean.setEmployeeId(id); // 社員ID</span>
+
+<span class="nc" id="L136">		mapper.insert(bean);</span>
+
+<span class="nc" id="L138">		return form;</span>
+	}
+
+	/**
+	 * ユーザー情報を削除する
+	 * 
+	 * @param form フォーム
+	 * @return 検索結果
+	 */
+	public CmsWorkHourForm delete(CmsWorkHourForm form) {
+
+<span class="nc" id="L149">		CmsWorkHourBean bean = new CmsWorkHourBean();</span>
+<span class="nc" id="L150">		bean.setEmployeeId(form.getEmployeeId());// 社員ID</span>
+
+<span class="nc" id="L152">		mapper.delete(bean);</span>
+
+<span class="nc" id="L154">		return selectLoginInfo(form);</span>
+	}
+
+	/**
+	 * ユーザー情報を初期化する
+	 * 
+	 * @return 社員フォーム
+	 * @throws SystemException 
+	 */
+	private CmsWorkHourForm initForm() throws SystemException {
+<span class="nc" id="L164">		CmsWorkHourForm form = new CmsWorkHourForm();</span>
+
+		// 選択リスト{SEXY:性別}
+<span class="nc" id="L167">		form.setSexyList(serviceUtils.getGeneralMastInfo(&quot;SEXY&quot;));</span>
+<span class="nc" id="L168">		form.setSelectedSexy(&quot;M&quot;);</span>
+
+		// 選択リスト{JOB_TYPE:職種}
+<span class="nc" id="L171">		form.setJobTypeList(serviceUtils.getGeneralMastInfo(&quot;JOB_TYPE&quot;));</span>
+<span class="nc" id="L172">		form.setSelectedJobType(&quot;J5&quot;);// 項目【職種】のデフォルト値を社員に設定する</span>
+
+		// 社員区分（ラジオボタン）
+<span class="nc" id="L175">		form.setGenders(CmsUtils.createGenders());</span>
+		// 社員区分（ラジオボタンの選択値）
+<span class="nc" id="L177">		form.setSelectGender(&quot;社員&quot;);</span>
+
+<span class="nc" id="L179">		return form;</span>
+	}
+
+	/**
+	 * 社員情報を更新する
+	 * 
+	 * @param form 社員フォーム
+	 */
+	public void update(CmsWorkHourForm form) {
+		// 画面から社員IDを取得する
+<span class="nc" id="L189">		String employeeId = form.getEmployeeId();</span>
+		// ログイン情報を検索する
+<span class="nc" id="L191">		CmsWorkHourBean bean = new CmsWorkHourBean();</span>
+<span class="nc" id="L192">		bean.setEmployeeId(employeeId);</span>
+
+<span class="nc" id="L194">		List&lt;CmsWorkHourBean&gt; employeeList = mapper.select(bean);</span>
+<span class="nc" id="L195">		CmsWorkHourBean updateBean = employeeList.get(0);</span>
+
+		// 8桁不足の場合、前に０を埋める
+<span class="nc" id="L198">		updateBean.setEmployeeId(updateBean.getEmployeeId()); // 社員ID</span>
+	
+<span class="nc" id="L200">		mapper.update(updateBean);</span>
+<span class="nc" id="L201">	}</span>
+
+	/**
+	 * 社員情報を初期化する
+	 * 
+	 * @param form 社員フォーム
+	 * @return 社員フォーム
+	 */
+	public CmsWorkHourForm readInit(CmsWorkHourForm form) {
+		
+<span class="nc" id="L211">		CmsWorkHourForm viewForm = null;</span>
+		try {
+			// フォーム初期化
+<span class="nc" id="L214">			viewForm = initForm();</span>
+	
+			// ログイン情報を検索する
+<span class="nc" id="L217">			CmsWorkHourBean sqlBean = new CmsWorkHourBean();</span>
+<span class="nc" id="L218">			sqlBean.setEmployeeId(form.getEmployeeId());</span>
+	
+<span class="nc" id="L220">			List&lt;CmsWorkHourBean&gt; searchResults = mapper.select(sqlBean);</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">			if (!CollectionUtils.isEmpty(searchResults)) {</span>
+<span class="nc" id="L222">				CmsWorkHourBean result = searchResults.get(0);</span>
+	
+<span class="nc" id="L224">				viewForm.setEmployeeId(result.getEmployeeId()); // 社員ID</span>
+		
+			}
+<span class="nc" id="L227">		} catch (SystemException se) {</span>
+<span class="nc" id="L228">			System.out.println(se.getMessage());</span>
+		}
+
+<span class="nc" id="L231">		return viewForm;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

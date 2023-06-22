@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>ServiceUtils.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.utils</a> &gt; <span class="el_source">ServiceUtils.java</span></div><h1>ServiceUtils.java</h1><pre class="source lang-java linenums">package com.utils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.transaction.SystemException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cms.entity.common.GeneralMstBean;
+import com.cms.mapper.common.GeneralMstMapper;
+
+@Service
+<span class="fc" id="L16">public class ServiceUtils {</span>
+
+	@Autowired
+	GeneralMstMapper generalMstMapper;
+
+	/**
+	 * 選択リストの設定
+	 * 
+	 * @param key 汎用マスタのキー
+	 * @throws SystemException 
+	 */
+	public Map&lt;String, String&gt; getGeneralMastInfo(String key) throws SystemException {
+
+<span class="nc" id="L29">		Map&lt;String, String&gt; mp = new HashMap&lt;String, String&gt;();</span>
+
+<span class="nc bnc" id="L31" title="All 2 branches missed.">		for (GeneralMstBean bean : selectGeneralMastInfo(key)) {</span>
+<span class="nc" id="L32">			mp.put(bean.getGeneralId(), bean.getGeneralName());</span>
+		}
+
+<span class="nc" id="L35">		return mp;</span>
+	}
+
+	/**
+	 * 選択リストの設定
+	 * 
+	 * @param generalList 汎用マスタのリスト
+	 * @param defaultVal  デフォルト値
+	 * @throws SystemException 
+	 */
+	public Map&lt;String, String&gt; getGeneralMastInfo(String key, String defaultVal) throws SystemException {
+
+<span class="nc" id="L47">		Map&lt;String, String&gt; mp = new HashMap&lt;String, String&gt;();</span>
+
+		// デフォルト値
+<span class="nc" id="L50">		mp.put(&quot;&quot;, defaultVal);</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">		for (GeneralMstBean bean : selectGeneralMastInfo(key)) {</span>
+<span class="nc" id="L52">			mp.put(bean.getGeneralId(), bean.getGeneralName());</span>
+		}
+
+<span class="nc" id="L55">		return mp;</span>
+	}
+
+	/**
+	 * 汎用マスタ情報の取得
+	 * 
+	 * @param key 汎用マスタのキー
+	 * @throws SystemException 
+	 */
+	private List&lt;GeneralMstBean&gt; selectGeneralMastInfo(String key) throws SystemException {
+
+<span class="nc" id="L66">		GeneralMstBean inBean = new GeneralMstBean();</span>
+<span class="nc" id="L67">		inBean.setGeneralKey(key);</span>
+<span class="nc" id="L68">		List&lt;GeneralMstBean&gt; ret = generalMstMapper.select(inBean);</span>
+<span class="nc bnc" id="L69" title="All 4 branches missed.">		if (ret == null || ret.size() == 0) {</span>
+<span class="nc" id="L70">			throw new SystemException(&quot;汎用マスタは存在しません。（汎用ID:）&quot;+key);</span>
+		}
+<span class="nc" id="L72">		return ret;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

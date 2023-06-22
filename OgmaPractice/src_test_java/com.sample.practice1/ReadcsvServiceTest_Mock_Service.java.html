@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>ReadcsvServiceTest_Mock_Service.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">com.sample.practice1</a> &gt; <span class="el_source">ReadcsvServiceTest_Mock_Service.java</span></div><h1>ReadcsvServiceTest_Mock_Service.java</h1><pre class="source lang-java linenums">package com.sample.practice1;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.cms.entity.employee.CmsEmployeeBean;
+import com.cms.form.practice1.ReadDataBaseForm;
+import com.cms.mapper.practice1.Practice1Mapper;
+import com.cms.service.practice1.ReadDataBaseServiceImpl;
+
+@SuppressWarnings(&quot;rawtypes&quot;)
+@RunWith(SpringRunner.class)  
+@SpringBootTest
+<span class="nc" id="L25">public class ReadcsvServiceTest_Mock_Service </span>
+{
+	
+	@InjectMocks
+	private ReadDataBaseServiceImpl service;
+     
+    @Mock
+    private Practice1Mapper mapper;
+    
+    /**
+     * 正常終了
+     * 
+     * 検索件数：1件
+     */
+    @Test
+    public void test_readDataFromMysql_01_OK() 
+    {
+    	
+    	//検索結果Mock
+<span class="nc" id="L44">    	List&lt;CmsEmployeeBean&gt; mockResults = new ArrayList&lt;CmsEmployeeBean&gt;();</span>
+
+<span class="nc" id="L46">    	mockResults.add(createBean(&quot;1&quot;));</span>
+<span class="nc" id="L47">    	mockResults.add(createBean(&quot;2&quot;));</span>
+<span class="nc" id="L48">    	mockResults.add(createBean(&quot;3&quot;));</span>
+    	
+    	//引数
+<span class="nc" id="L51">    	CmsEmployeeBean paramBean = new CmsEmployeeBean();</span>
+    	
+<span class="nc" id="L53">    	Mockito.when(this.mapper.select(paramBean)).thenReturn(mockResults);</span>
+    	
+<span class="nc" id="L55">    	List&lt;CmsEmployeeBean&gt; beanList = null;</span>
+		try {
+<span class="nc" id="L57">			beanList = service.readDataFromMysql(new ReadDataBaseForm());</span>
+			//件数比較
+<span class="nc" id="L59">	    	assertEquals(3, beanList.size());</span>
+	    	
+<span class="nc" id="L61">	    	int index = 0;</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">	    	for (CmsEmployeeBean bean : beanList) {</span>
+	    		//項目比較
+<span class="nc" id="L64">	    		mockResults.get(index);</span>
+<span class="nc" id="L65">	    		assertEquals(bean.getEmployeeId(),mockResults.get(index).getEmployeeId());</span>
+<span class="nc" id="L66">	    		assertEquals(bean.getName(),mockResults.get(index).getName());</span>
+<span class="nc" id="L67">	     		assertEquals(bean.getAddress(),mockResults.get(index).getAddress());</span>
+<span class="nc" id="L68">	    		index ++;</span>
+	    	}
+<span class="nc" id="L70">		} catch (Exception e) {</span>
+<span class="nc" id="L71">			e.printStackTrace();</span>
+		}
+<span class="nc" id="L73">    }</span>
+    
+    /**
+     * 正常終了
+     * 
+     * 検索件数：1件(検索結果と条件が一致する)
+     */
+    @Test
+    public void test_readDataFromMysql_02_OK() 
+    {
+    	
+    	//検索結果Mock
+<span class="nc" id="L85">    	List&lt;CmsEmployeeBean&gt; mockResults = new ArrayList&lt;CmsEmployeeBean&gt;();</span>
+
+<span class="nc" id="L87">    	mockResults.add(createBean(&quot;1&quot;));</span>
+    	
+    	//引数
+<span class="nc" id="L90">    	CmsEmployeeBean paramBean = new CmsEmployeeBean();</span>
+<span class="nc" id="L91">    	paramBean.setEmployeeId(&quot;1&quot;);</span>
+    	
+<span class="nc" id="L93">    	Mockito.when(this.mapper.select(paramBean)).thenReturn(mockResults);</span>
+    	
+<span class="nc" id="L95">    	List&lt;CmsEmployeeBean&gt; beanList = null;</span>
+		try {
+<span class="nc" id="L97">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L98">			form.setEmployeeId(&quot;1&quot;);</span>
+<span class="nc" id="L99">			beanList = service.readDataFromMysql(form);</span>
+<span class="nc" id="L100">		} catch (Exception e) {</span>
+<span class="nc" id="L101">			e.printStackTrace();</span>
+		}
+    	
+<span class="nc" id="L104">    	assertEquals(1, beanList.size());</span>
+    	
+<span class="nc" id="L106">    }</span>
+
+    /**
+     * 正常終了
+     * 
+     * 検索件数：1件(※検索結果と条件が不一致です。)
+     */
+    @Test
+    public void test_readDataFromMysql_03_OK() 
+    {
+    	
+    	//検索結果Mock
+<span class="nc" id="L118">    	List&lt;CmsEmployeeBean&gt; mockResults = new ArrayList&lt;CmsEmployeeBean&gt;();</span>
+
+<span class="nc" id="L120">    	mockResults.add(createBean(&quot;9&quot;));</span>
+    	
+    	//引数
+<span class="nc" id="L123">    	CmsEmployeeBean paramBean = new CmsEmployeeBean();</span>
+<span class="nc" id="L124">    	paramBean.setEmployeeId(&quot;3&quot;);</span>
+    	
+<span class="nc" id="L126">    	Mockito.when(this.mapper.select(paramBean)).thenReturn(mockResults);</span>
+    	
+<span class="nc" id="L128">    	List&lt;CmsEmployeeBean&gt; beanList = null;</span>
+		try {
+			
+<span class="nc" id="L131">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L132">			form.setEmployeeId(&quot;3&quot;);</span>
+<span class="nc" id="L133">			beanList = service.readDataFromMysql(form);</span>
+			
+<span class="nc" id="L135">		} catch (Exception e) {</span>
+<span class="nc" id="L136">			e.printStackTrace();</span>
+		}
+    	
+<span class="nc" id="L139">    	assertEquals(1, beanList.size());</span>
+    	
+<span class="nc" id="L141">    }</span>
+    /**
+     * 異常終了（検索結果がありません。）
+     * 
+     */
+    @Test
+    public void test_readDataFromMysql_01_NG() 
+    {
+<span class="nc" id="L149">    	System.out.println(&quot;■test_readDataFromMysql_01_NG 開始&quot;);</span>
+    	
+<span class="nc" id="L151">    	CmsEmployeeBean bean = new CmsEmployeeBean();</span>
+<span class="nc" id="L152">    	bean.setEmployeeId(&quot;1111&quot;);</span>
+<span class="nc" id="L153">    	List&lt;CmsEmployeeBean&gt; mockResults = new ArrayList&lt;CmsEmployeeBean&gt;();</span>
+<span class="nc" id="L154">        when(this.mapper.select(bean)).thenReturn(mockResults);</span>
+    	
+        try {
+<span class="nc" id="L157">			ReadDataBaseForm form = new ReadDataBaseForm();</span>
+<span class="nc" id="L158">			form.setEmployeeId(&quot;1111&quot;);</span>
+<span class="nc" id="L159">			List&lt;CmsEmployeeBean&gt; beanList = service.readDataFromMysql(form);</span>
+<span class="nc" id="L160">		} catch (Exception e) {</span>
+<span class="nc" id="L161">	    	assertEquals(&quot;検索結果がありません。&quot;, e.getMessage());</span>
+		}
+        
+    	
+<span class="nc" id="L165">    	System.out.println(&quot;■test_readDataFromMysql_01_NG 終了&quot;);</span>
+<span class="nc" id="L166">    }</span>
+    
+    private CmsEmployeeBean createBean(String key) {
+<span class="nc" id="L169">    	CmsEmployeeBean mockBean = new CmsEmployeeBean();</span>
+<span class="nc" id="L170">    	mockBean.setEmployeeId(key);</span>
+<span class="nc" id="L171">    	mockBean.setName(&quot;社員&quot;+key);</span>
+<span class="nc" id="L172">    	mockBean.setAddress(&quot;aaaaaaa&quot;);</span>
+    	
+<span class="nc" id="L174">    	return mockBean;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

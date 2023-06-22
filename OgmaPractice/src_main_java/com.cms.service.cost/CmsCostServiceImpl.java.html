@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CmsCostServiceImpl.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cms.service.cost</a> &gt; <span class="el_source">CmsCostServiceImpl.java</span></div><h1>CmsCostServiceImpl.java</h1><pre class="source lang-java linenums">package com.cms.service.cost;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+import javax.transaction.SystemException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import com.cms.common.Constant;
+import com.cms.entity.cost.CmsCostBean;
+import com.cms.entity.employee.CmsEmployeeBean;
+import com.cms.form.cost.CmsCostForm;
+import com.cms.form.cost.CmsCostListForm;
+import com.cms.mapper.cost.CmsCostMapper;
+import com.cms.mapper.employee.CmsEmployeeMapper;
+import com.utils.CmsUtils;
+import com.utils.ServiceUtils;
+
+/**
+ * ユーザー情報 Service
+ */
+@Service
+<span class="fc" id="L28">public class CmsCostServiceImpl implements CmsCostService {</span>
+
+	/****** Mapper ******/
+	@Autowired
+	CmsCostMapper mapper;
+
+	@Autowired
+	HttpSession session;
+
+	@Autowired
+	ServiceUtils serviceUtils;
+	/**
+	 * ユーザー情報検索 @param userSearchRequest リクエストデータ
+	 * 
+	 * @return 検索結果
+	 */
+	public CmsCostListForm select(CmsCostListForm form) {
+		
+		// 検索条件を条件に設定する
+<span class="nc" id="L47">		CmsCostBean bean = new CmsCostBean();</span>
+		
+<span class="nc bnc" id="L49" title="All 4 branches missed.">		if (StringUtils.isNotEmpty(form.getSessionEmployeeId()) &amp;&amp; &quot;J5&quot;.equals(form.getSessionJobType())) {</span>
+			/**
+			 * 社員ID
+			 * ・{社員:J5}の場合、社員自己の費用を抽出する
+			 * ・{社員:J5}以外の場合、社員全体の費用を抽出する
+			 */
+<span class="nc" id="L55">			bean.setEmployeeId(form.getSessionEmployeeId());</span>
+		}
+		
+<span class="nc bnc" id="L58" title="All 2 branches missed.">		if (StringUtils.isNotEmpty(form.getName())) {</span>
+			//社員名
+<span class="nc" id="L60">			bean.setEmployeeNm(form.getName());</span>
+		}
+		
+<span class="nc bnc" id="L63" title="All 2 branches missed.">		if (StringUtils.isNotEmpty(form.getMonth())) {</span>
+			//費用発生年月
+<span class="nc" id="L65">			bean.setCostMonth(form.getMonth());</span>
+		}
+		
+		//検索結果を画面に設定する
+<span class="nc" id="L69">		form.setResults(mapper.select(bean));</span>
+
+<span class="nc" id="L71">		return form;</span>
+	}
+
+	/**
+	 * ユーザー情報検索 @param userSearchRequest リクエストデータ
+	 * 
+	 * @return 検索結果
+	 * @throws SystemException 
+	 */
+	public CmsCostForm insertInit(CmsCostForm form) throws SystemException {
+		// フォーム初期化
+<span class="nc" id="L82">		initForm(form);</span>
+
+<span class="nc" id="L84">		return form;</span>
+	}
+
+	/**
+	 * ユーザー情報検索 @param userSearchRequest リクエストデータ
+	 * 
+	 * @return 検索結果
+	 * @throws SystemException 
+	 */
+	public CmsCostForm editInit(CmsCostForm form) throws SystemException {
+
+		// フォーム初期化
+<span class="nc" id="L96">		initForm(form);</span>
+
+		// ログイン情報を検索する
+<span class="nc" id="L99">		CmsCostBean sqlBean = new CmsCostBean();</span>
+<span class="nc" id="L100">		sqlBean.setCostId(form.getCostId());</span>
+
+<span class="nc" id="L102">		List&lt;CmsCostBean&gt; searchResults = mapper.select(sqlBean);</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">		if (!CollectionUtils.isEmpty(searchResults)) {</span>
+<span class="nc" id="L104">			CmsCostBean bean = searchResults.get(0);</span>
+
+<span class="nc" id="L106">		  form.setCostId(bean.getCostId());               //費用ID</span>
+<span class="nc" id="L107">		  Date costDay = CmsUtils.FormatToDate(bean.getCostDay(), &quot;yyyy-MM-dd&quot;);</span>
+<span class="nc" id="L108">		  form.setCostDay(costDay);                       //費用発生日</span>
+<span class="nc" id="L109">		  form.setCostNote(bean.getCostNote());           //費用コメント</span>
+<span class="nc" id="L110">		  form.setSelectedCostType(bean.getCostType());   //費用種別</span>
+<span class="nc" id="L111">		  form.setCostAmount(bean.getCostAmount());       //費用金額</span>
+<span class="nc" id="L112">		  form.setHasTax(bean.getHasTax());               //税金有無</span>
+<span class="nc" id="L113">		  form.setTaxNote(bean.getTaxNote());             //税金備考</span>
+<span class="nc" id="L114">		  form.setEmployeeId(bean.getEmployeeId());       //社員ID</span>
+	    }
+
+<span class="nc" id="L117">		return form;</span>
+	}
+
+	/**
+	 * ユーザー情報検索
+	 * 
+	 * @param form フォーム
+	 * @return 検索結果
+	 */
+	public CmsCostForm insert(CmsCostForm form) {
+
+		// ログイン情報を検索する
+<span class="nc" id="L129">		CmsCostBean bean = new CmsCostBean();</span>
+
+<span class="nc" id="L131">		String maxId = mapper.selectMaxId();</span>
+		//1件も登録されない場合、初期値を１に設定する
+<span class="nc bnc" id="L133" title="All 2 branches missed.">		maxId = (maxId == null)? &quot;0&quot;:maxId; </span>
+		// 8桁不足の場合、前に０を埋める
+<span class="nc" id="L135">		String id = String.format(Constant.FORMAT_EMPLOYEEID, Integer.valueOf(maxId) + 1);</span>
+
+<span class="nc" id="L137">		bean.setCostId(id);//費用ID</span>
+<span class="nc" id="L138">		String costDay = CmsUtils.formatDateToString(form.getCostDay(), &quot;yyyy-MM-dd&quot;);</span>
+<span class="nc" id="L139">		bean.setCostDay(costDay);//費用発生日</span>
+<span class="nc" id="L140">		bean.setCostNote(form.getCostNote());//費用コメント</span>
+<span class="nc" id="L141">		bean.setCostType(form.getSelectedCostType());//費用種別</span>
+<span class="nc" id="L142">		bean.setCostAmount(form.getCostAmount());//費用金額</span>
+<span class="nc" id="L143">		bean.setHasTax(form.getHasTax());//税金有無</span>
+<span class="nc" id="L144">		bean.setTaxNote(form.getTaxNote());//税金備考</span>
+<span class="nc" id="L145">		bean.setEmployeeId(form.getEmployeeId()); // 社員ID</span>
+		  
+<span class="nc" id="L147">		mapper.insert(bean);</span>
+
+<span class="nc" id="L149">		return form;</span>
+	}
+
+	/**
+	 * 費用情報を削除する
+	 * 
+	 * @param form フォーム
+	 * @return 検索結果
+	 */
+	public CmsCostListForm delete(CmsCostListForm form) {
+
+<span class="nc" id="L160">		CmsCostBean bean = new CmsCostBean();</span>
+<span class="nc" id="L161">		bean.setCostId(form.getCostId());// 社員ID</span>
+
+<span class="nc" id="L163">		mapper.delete(bean);</span>
+
+<span class="nc" id="L165">		return select(form);</span>
+	}
+	
+	/**
+	 * 複数件の費用を削除する
+	 * 
+	 * @param form フォーム
+	 * @return 検索結果
+	 */
+	public CmsCostListForm deleteAll(CmsCostListForm form) {
+		
+<span class="nc" id="L176">		String[] delIds = form.getDelItemIds().split(&quot;,&quot;);</span>
+<span class="nc" id="L177">		mapper.deleteAll(delIds);</span>
+
+<span class="nc" id="L179">		return select(form);</span>
+	}
+	/**
+	 * 費用情報フォームを初期化する
+	 * 
+	 * @param 費用フォーム
+	 * @throws SystemException 
+	 */
+	private void initForm(CmsCostForm form) throws SystemException {
+		
+		//費用種別
+<span class="nc" id="L190">		form.setCostTypeList(serviceUtils.getGeneralMastInfo(&quot;COST_TYPE&quot;));</span>
+<span class="nc" id="L191">		form.setSelectedCostType(&quot;C1&quot;);</span>
+		
+		//税金有無
+<span class="nc" id="L194">		form.setHasTaxList(serviceUtils.getGeneralMastInfo(&quot;TAX_FLG&quot;));</span>
+<span class="nc" id="L195">		form.setHasTax(&quot;1&quot;);</span>
+<span class="nc" id="L196">	}</span>
+
+	/**
+	 * 社員情報を更新する
+	 * 
+	 * @param form 社員フォーム
+	 */
+	public void update(CmsCostForm form) {
+		
+		// 費用ID
+<span class="nc" id="L206">		CmsCostBean bean = new CmsCostBean();</span>
+<span class="nc" id="L207">		bean.setCostId(form.getCostId());</span>
+
+<span class="nc" id="L209">		List&lt;CmsCostBean&gt; retList = mapper.select(bean);</span>
+<span class="nc" id="L210">		CmsCostBean updateBean = retList.get(0);</span>
+
+		// 8桁不足の場合、前に０を埋める
+<span class="nc" id="L213">		updateBean.setCostId(form.getCostId());               //費用ID</span>
+<span class="nc" id="L214">		String costDay = CmsUtils.formatDateToString(form.getCostDay(), &quot;yyyy-MM-dd&quot;);</span>
+<span class="nc" id="L215">		updateBean.setCostDay(costDay);                       //費用発生日</span>
+<span class="nc" id="L216">		updateBean.setCostNote(form.getCostNote());           //費用コメント</span>
+<span class="nc" id="L217">		updateBean.setCostType(form.getSelectedCostType());   //費用種別</span>
+<span class="nc" id="L218">		updateBean.setCostAmount(form.getCostAmount());       //費用金額</span>
+<span class="nc" id="L219">		updateBean.setHasTax(form.getHasTax());               //税金有無</span>
+<span class="nc" id="L220">		updateBean.setTaxNote(form.getTaxNote());             //税金備考</span>
+<span class="nc" id="L221">		mapper.update(updateBean);</span>
+<span class="nc" id="L222">	}</span>
+
+	/**
+	 * 社員情報を初期化する
+	 * 
+	 * @param form 社員フォーム
+	 * @return 社員フォーム
+	 * @throws SystemException 
+	 */
+	public CmsCostForm readInit(CmsCostForm form) throws SystemException {
+		// フォーム初期化
+<span class="nc" id="L233">		initForm(form);</span>
+
+		// ログイン情報を検索する
+<span class="nc" id="L236">		CmsCostBean sqlBean = new CmsCostBean();</span>
+<span class="nc bnc" id="L237" title="All 2 branches missed.">		if (StringUtils.isNotEmpty(form.getCostId())) {</span>
+<span class="nc" id="L238">			sqlBean.setCostId(form.getCostId());</span>
+		}
+
+<span class="nc" id="L241">		List&lt;CmsCostBean&gt; searchResults = mapper.select(sqlBean);</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">		if (!CollectionUtils.isEmpty(searchResults)) {</span>
+<span class="nc" id="L243">			CmsCostBean bean = searchResults.get(0);</span>
+<span class="nc" id="L244">			  form.setCostId(bean.getCostId());                 //費用ID</span>
+<span class="nc" id="L245">			  Date costDay = CmsUtils.FormatToDate(bean.getCostDay(), &quot;yyyy-MM-dd&quot;);</span>
+<span class="nc" id="L246">			  form.setCostDay(costDay);                         //費用発生日</span>
+<span class="nc" id="L247">			  form.setCostNote(bean.getCostNote());             //費用コメント</span>
+<span class="nc" id="L248">			  form.setSelectedCostType(bean.getCostType());     //費用種別</span>
+<span class="nc" id="L249">			  form.setCostAmount(bean.getCostAmount());         //費用金額</span>
+<span class="nc" id="L250">			  form.setHasTax(bean.getHasTax());                 //税金有無</span>
+<span class="nc" id="L251">			  form.setTaxNote(bean.getTaxNote());               //税金備考</span>
+<span class="nc" id="L252">			  form.setEmployeeId(bean.getEmployeeId());         //社員ID</span>
+		}
+
+<span class="nc" id="L255">		return form;</span>
+	}
+	
+
+	@Autowired
+	CmsEmployeeMapper employeeMapper;
+	/**
+	 * 社員情報の検索
+	 * 
+	 * @param name 社員名
+	 * @return 検索結果
+	 */
+	public List&lt;CmsEmployeeBean&gt; searchEmployees(String name) {
+<span class="nc" id="L268">		CmsEmployeeBean bean = new CmsEmployeeBean();</span>
+<span class="nc" id="L269">		bean.setName(name);</span>
+<span class="nc" id="L270">		List&lt;CmsEmployeeBean&gt; retList = employeeMapper.select(bean);</span>
+<span class="nc" id="L271">		return retList;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>

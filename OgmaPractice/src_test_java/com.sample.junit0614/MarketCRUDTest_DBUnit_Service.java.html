@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>MarketCRUDTest_DBUnit_Service.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</a> &gt; <a href="../../index.html" class="el_group">OgmaPractice</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">com.sample.junit0614</a> &gt; <span class="el_source">MarketCRUDTest_DBUnit_Service.java</span></div><h1>MarketCRUDTest_DBUnit_Service.java</h1><pre class="source lang-java linenums">package com.sample.junit0614;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.dbunit.database.IDatabaseConnection;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.base.UnitTestBase;
+import com.cms.form.marketstore.MarketStoreForm;
+import com.cms.form.marketstore.MarketStoreListForm;
+import com.cms.service.marketstore.MarketStoreServiceImpl;
+
+@SuppressWarnings(&quot;rawtypes&quot;)
+@RunWith(SpringRunner.class)
+@SpringBootTest
+<span class="nc" id="L22">public class MarketCRUDTest_DBUnit_Service {</span>
+	private static IDatabaseConnection conn;
+	private final static String path = &quot;src\\test\\data\\practice4\\&quot;;
+
+	/* テストデータを登録する */
+	@BeforeAll
+	public static void init() throws Exception {
+<span class="nc" id="L29">		conn = UnitTestBase.connect();</span>
+
+		// 実施前にテーブルの既存データをクリアする
+<span class="nc" id="L32">		UnitTestBase.clearData(path, conn);</span>
+		// CSVデータを取り込む
+<span class="nc" id="L34">		UnitTestBase.initData(path, conn);</span>
+<span class="nc" id="L35">	}</span>
+
+	@AfterAll
+	public static void closeConnection() throws Exception {
+<span class="nc" id="L39">		UnitTestBase.clearData(path, conn);</span>
+		// CSVデータを取り込む
+<span class="nc" id="L41">		UnitTestBase.closeConnection(conn);</span>
+<span class="nc" id="L42">	}</span>
+
+	@Autowired
+	MarketStoreServiceImpl service;
+
+	/**
+	 * 空表单,All Select
+	 * 
+	 * 検索件数：6件
+	 */
+	@Test
+	public void test_marketCRUD_select001_OK() {
+<span class="nc" id="L54">		MarketStoreListForm inForm = new MarketStoreListForm();</span>
+
+		MarketStoreListForm resultForm;
+		try {
+<span class="nc" id="L58">			resultForm = service.select(inForm);</span>
+<span class="nc" id="L59">			assertEquals(6, resultForm.getResults().size());</span>
+//	    	}
+<span class="nc" id="L61">		} catch (Exception e) {</span>
+<span class="nc" id="L62">			e.printStackTrace();</span>
+<span class="nc" id="L63">			fail(&quot;test failed&quot;);</span>
+		}
+<span class="nc" id="L65">	}</span>
+
+	/**
+	 * with param , Exception
+	 * 
+	 * 検索件数：0件
+	 */
+	@Test
+	public void test_marketCRUD_select002_OK() {
+<span class="nc" id="L74">		MarketStoreListForm inForm = new MarketStoreListForm();</span>
+<span class="nc" id="L75">		inForm.setStoreName(&quot;1&quot;);</span>
+<span class="nc" id="L76">		inForm.setAddress(&quot;2&quot;);</span>
+
+		MarketStoreListForm resultForm;
+		try {
+<span class="nc" id="L80">			service.select(inForm);</span>
+<span class="nc" id="L81">			fail(&quot;test failed&quot;);</span>
+<span class="nc" id="L82">		} catch (Exception e) {</span>
+<span class="nc" id="L83">			assertEquals(&quot;検索結果はありません。&quot;, e.getMessage());</span>
+		}
+<span class="nc" id="L85">	}</span>
+
+	/**
+	 * insert
+	 * 
+	 * 検索件数：1件
+	 */
+	@Test
+	public void test_marketCRUD_insert003_OK() {
+<span class="nc" id="L94">		MarketStoreForm inForm = new MarketStoreForm();</span>
+<span class="nc" id="L95">		inForm.setStoreName(&quot;Ayaka&quot;);</span>
+<span class="nc" id="L96">		inForm.setAddress(&quot;1-11-1&quot;);</span>
+<span class="nc" id="L97">		inForm.setPhone(&quot;090804812&quot;);</span>
+<span class="nc" id="L98">		inForm.setStartDay(&quot;2000-11-11&quot;);</span>
+<span class="nc" id="L99">		inForm.setFinishDay(&quot;2011-11-11&quot;);</span>
+
+<span class="nc" id="L101">		MarketStoreListForm checkBefore = new MarketStoreListForm();</span>
+<span class="nc" id="L102">		MarketStoreListForm checkAfter = new MarketStoreListForm();</span>
+
+		try {
+<span class="nc" id="L105">			int before = service.select(checkBefore).getResults().size();</span>
+<span class="nc" id="L106">			service.insert(inForm);</span>
+<span class="nc" id="L107">			int after = service.select(checkAfter).getResults().size();</span>
+<span class="nc" id="L108">			assertEquals(before + 1, after);</span>
+
+<span class="nc" id="L110">		} catch (Exception e) {</span>
+<span class="nc" id="L111">			fail(&quot;test failed&quot;);</span>
+		}
+<span class="nc" id="L113">	}</span>
+
+	/**
+	 * editinitl
+	 * 
+	 * 検索件数：1件
+	 */
+	@Test
+	public void test_marketCRUD_editInit001_OK() {
+<span class="nc" id="L122">		MarketStoreForm inForm = new MarketStoreForm();</span>
+<span class="nc" id="L123">		inForm.setStoreId(&quot;00000003&quot;);</span>
+
+		MarketStoreForm resultForm;
+		try {
+<span class="nc" id="L127">			resultForm = service.editInit(inForm);</span>
+<span class="nc" id="L128">			assertEquals(&quot;00000003&quot;, resultForm.getStoreId());</span>
+<span class="nc" id="L129">		} catch (Exception e) {</span>
+<span class="nc" id="L130">			fail(&quot;test failed&quot;);</span>
+		}
+<span class="nc" id="L132">	}</span>
+
+	/**
+	 * update
+	 * 
+	 * 検索件数：1件
+	 */
+	@Test
+	public void test_marketCRUD_update001_OK() {
+<span class="nc" id="L141">		MarketStoreForm inForm = new MarketStoreForm();</span>
+<span class="nc" id="L142">		MarketStoreListForm checkForm = new MarketStoreListForm();</span>
+<span class="nc" id="L143">		inForm.setStoreId(&quot;00000003&quot;);</span>
+<span class="nc" id="L144">		checkForm.setStoreName(&quot;Asaka&quot;);</span>
+<span class="nc" id="L145">		inForm.setStoreName(&quot;Asaka&quot;);</span>
+<span class="nc" id="L146">		inForm.setAddress(&quot;Nakano&quot;);</span>
+<span class="nc" id="L147">		inForm.setPhone(&quot;123412345&quot;);</span>
+<span class="nc" id="L148">		inForm.setStartDay(&quot;2000-11-11&quot;);</span>
+<span class="nc" id="L149">		inForm.setFinishDay(&quot;2020-11-11&quot;);</span>
+
+		MarketStoreListForm resultForm;
+		try {
+<span class="nc" id="L153">			service.update(inForm);</span>
+<span class="nc" id="L154">			resultForm = service.select(checkForm);</span>
+<span class="nc" id="L155">			assertEquals(1, resultForm.getResults().size());</span>
+<span class="nc" id="L156">		} catch (Exception e) {</span>
+<span class="nc" id="L157">			fail(&quot;test failed&quot;);</span>
+		}
+<span class="nc" id="L159">	}</span>
+
+	/**
+	 * readinitl
+	 * 
+	 * 検索件数：1件
+	 */
+	@Test
+	public void test_marketCRUD_readinit001_OK() {
+<span class="nc" id="L168">		MarketStoreForm inForm = new MarketStoreForm();</span>
+<span class="nc" id="L169">		inForm.setStoreId(&quot;00000003&quot;);</span>
+
+		MarketStoreForm resultForm;
+		try {
+<span class="nc" id="L173">			resultForm = service.readInit(inForm);</span>
+<span class="nc" id="L174">			assertEquals(&quot;00000003&quot;, resultForm.getStoreId());</span>
+<span class="nc" id="L175">		} catch (Exception e) {</span>
+<span class="nc" id="L176">			fail(&quot;test failed&quot;);</span>
+		}
+<span class="nc" id="L178">	}</span>
+
+	/**
+	 * delete
+	 * 
+	 * 検索件数：1件
+	 */
+	@Test
+	public void test_marketCRUD_delete001_OK() {
+
+<span class="nc" id="L188">		MarketStoreListForm checkBefore = new MarketStoreListForm();</span>
+<span class="nc" id="L189">		MarketStoreListForm checkAfter = new MarketStoreListForm();</span>
+
+		try {
+<span class="nc" id="L192">			int before = service.select(checkBefore).getResults().size();</span>
+<span class="nc" id="L193">			service.delete(&quot;00000004&quot;);</span>
+<span class="nc" id="L194">			int after = service.select(checkAfter).getResults().size();</span>
+<span class="nc" id="L195">			assertEquals(before-1, after);</span>
+
+<span class="nc" id="L197">		} catch (Exception e) {</span>
+<span class="nc" id="L198">			fail(&quot;test failed&quot;);</span>
+		}
+<span class="nc" id="L200">	}</span>
+	
+	/**
+	 * delete_all
+	 * 
+	 * 検索件数：0件
+	 */
+	@Test
+	public void test_marketCRUD_deleteAll001_OK() {
+
+<span class="nc" id="L210">		MarketStoreListForm checkBefore = new MarketStoreListForm();</span>
+<span class="nc" id="L211">		MarketStoreListForm checkAfter = new MarketStoreListForm();</span>
+
+		try {
+<span class="nc" id="L214">			int before = service.select(checkBefore).getResults().size();</span>
+<span class="nc" id="L215">			service.deleteAll(&quot;00000001,00000005,00000006&quot;);</span>
+<span class="nc" id="L216">			int after = service.select(checkAfter).getResults().size();</span>
+<span class="nc" id="L217">			assertEquals(before-3, after);</span>
+
+<span class="nc" id="L219">		} catch (Exception e) {</span>
+<span class="nc" id="L220">			fail(&quot;test failed&quot;);</span>
+		}
+<span class="nc" id="L222">	}</span>
+	
+	
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>MarketCsvTest_DBUnit_Service (2023年6月20日 下午6:23:45)</div></body></html>
